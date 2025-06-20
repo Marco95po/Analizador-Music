@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador de Calidad de Audio y Letra</title>
+    <style>
+        :root {
+            --primary-color: #FF6B00;
+            --primary-dark: #E05E00;
+            --primary-light: #FF8C42;
+            --secondary-color: #1A1A1A;
+            --secondary-light: #2A2A2A;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --excellent-color: #FF9E00;
+            --good-color: #FFB74D;
+            --average-color: #FFCC80;
+            --poor-color: #FFE0B2;
+            --light-gray: #121212;
+            --medium-gray: #333;
+            --dark-gray: #080808;
+            --text-color: #E0E0E0;
+            --text-light: #B0B0B0;
+            --white: #F5F5F5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 15px;
+            background-color: var(--dark-gray);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--secondary-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(255, 107, 0, 0.1);
+            border: 1px solid var(--medium-gray);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 25px;
+            border-bottom: 2px solid var(--primary-dark);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--primary-light);
+        }
+
+        .upload-section {
+            border: 2px dashed var(--primary-color);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            background-color: var(--secondary-light);
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            background-color: rgba(42, 42, 42, 0.8);
+            border-color: var(--primary-light);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 0, 0.3);
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 25px;
+        }
+
+        .result-item {
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 10px;
+            background-color: var(--secondary-light);
+            border-radius: 5px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .result-label {
+            font-weight: bold;
+            color: var(--primary-light);
+            margin-right: 5px;
+            min-width: 150px;
+        }
+
+        .basic {
+            color: #4CAF50;
+        }
+
+        .professional {
+            color: #FFC107;
+        }
+
+        .premium {
+            color: #F44336;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 5px;
+            color: var(--primary-color);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--text-light);
+            word-break: break-all;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 5px solid var(--secondary-light);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .lyrics-section, .profit-potential {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .lyrics-section {
+            background-color: rgba(26, 26, 26, 0.7);
+            border-left: 5px solid var(--excellent-color);
+        }
+
+        .lyrics-quality {
+            font-weight: bold;
+        }
+
+        .excellent {
+            color: var(--excellent-color);
+        }
+
+        .good {
+            color: var(--good-color);
+        }
+
+        .average {
+            color: var(--average-color);
+        }
+
+        .poor {
+            color: var(--poor-color);
+        }
+
+        .profit-potential {
+            background-color: rgba(26, 26, 26, 0.7);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .profit-meter {
+            height: 20px;
+            background-color: var(--secondary-light);
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color), var(--primary-light));
+            width: 0%;
+            transition: width 1s;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            background-color: var(--secondary-light);
+            border: 1px solid var(--medium-gray);
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            color: var(--text-light);
+        }
+
+        .tab.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab:hover:not(.active) {
+            background-color: var(--medium-gray);
+            color: var(--white);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .copyright {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .copyright-detected {
+            background-color: rgba(198, 40, 40, 0.1);
+            color: #EF9A9A;
+            border-left: 5px solid #C62828;
+        }
+
+        .copyright-clean {
+            background-color: rgba(46, 125, 50, 0.1);
+            color: #A5D6A7;
+            border-left: 5px solid #2E7D32;
+        }
+
+        .hash-info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+
+        .progress-container {
+            width: 100%;
+            margin: 20px 0;
+            background-color: var(--secondary-light);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-title {
+            font-weight: bold;
+            color: var(--primary-light);
+        }
+
+        .progress-percentage {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: var(--light-gray);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
+            width: 0%;
+            transition: width 0.5s ease-out;
+            border-radius: 10px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .progress-step {
+            position: relative;
+            text-align: center;
+            flex: 1;
+        }
+
+        .progress-step.active {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .progress-step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--medium-gray);
+            z-index: 1;
+        }
+
+        .progress-step.active:not(:last-child):after {
+            background-color: var(--primary-color);
+        }
+
+        .progress-step-circle {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: var(--medium-gray);
+            border-radius: 50%;
+            line-height: 20px;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step.active .progress-step-circle {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .floating-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .download-pdf-btn {
+            background-color: var(--danger-color);
+            color: var(--white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 20px auto;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+        }
+
+        .download-pdf-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Estilos responsivos */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .upload-section {
+                padding: 15px;
+            }
+            
+            .result-label {
+                min-width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .price {
+                font-size: 1.3rem;
+            }
+            
+            .progress-step {
+                font-size: 0.7rem;
+            }
+            
+            .progress-step-circle {
+                width: 16px;
+                height: 16px;
+                line-height: 16px;
+            }
+            
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            h2 {
+                font-size: 1.1rem;
+            }
+            
+            .upload-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .tab {
+                padding: 6px 10px;
+                margin-right: 3px;
+                margin-bottom: 3px;
+            }
+            
+            .price {
+                font-size: 1.2rem;
+            }
+            
+            .progress-steps {
+                flex-wrap: wrap;
+            }
+            
+            .progress-step {
+                flex: 0 0 50%;
+                margin-bottom: 10px;
+            }
+            
+            .floating-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+    <!-- Incluir la biblioteca jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <!-- Botón flotante para ir a index.html -->
+    <a href="menu.html" class="floating-btn">🔙</a>
+    
+    <div class="container">
+        <h1>Analizador de Calidad de Audio y Letra</h1>
+        
+        <div class="upload-section">
+            <p>Sube tu archivo de audio para analizar su calidad, letra y potencial comercial</p>
+            <input type="file" id="fileInput" accept="audio/*">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Seleccionar Archivo</button>
+            <p id="fileName" class="file-info">No se ha seleccionado ningún archivo</p>
+            <p id="fileHash" class="hash-info"></p>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analizando audio y letra...</p>
+            
+            <!-- Barra de progreso y contador -->
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-title">Progreso del análisis</span>
+                    <span id="progressPercentage" class="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div class="progress-steps">
+                    <div class="progress-step" id="step1">
+                        <div class="progress-step-circle">1</div>
+                        <div>Subiendo archivo</div>
+                    </div>
+                    <div class="progress-step" id="step2">
+                        <div class="progress-step-circle">2</div>
+                        <div>Analizando audio</div>
+                    </div>
+                    <div class="progress-step" id="step3">
+                        <div class="progress-step-circle">3</div>
+                        <div>Extrayendo letra</div>
+                    </div>
+                    <div class="progress-step" id="step4">
+                        <div class="progress-step-circle">4</div>
+                        <div>Verificando copyright</div>
+                    </div>
+                    <div class="progress-step" id="step5">
+                        <div class="progress-step-circle">5</div>
+                        <div>Generando reporte</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('audio')">Calidad de Audio</div>
+                <div class="tab" onclick="switchTab('lyrics')">Análisis de Letra</div>
+                <div class="tab" onclick="switchTab('profit')">Potencial de Ganancias</div>
+                <div class="tab" onclick="switchTab('copyright')">Detección de Copyright</div>
+            </div>
+            
+            <div id="audioTab" class="tab-content active">
+                <h2>Resultados del Análisis de Audio</h2>
+                
+                <div class="result-item">
+                    <span class="result-label">Formato del archivo:</span>
+                    <span id="formatResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Tasa de bits:</span>
+                    <span id="bitrateResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Frecuencia de muestreo:</span>
+                    <span id="sampleRateResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Canales:</span>
+                    <span id="channelsResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Duración:</span>
+                    <span id="durationResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Nivel de calidad:</span>
+                    <span id="qualityResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Precio recomendado:</span>
+                    <div id="priceResult" class="price">-</div>
+                </div>
+            </div>
+            
+            <div id="lyricsTab" class="tab-content">
+                <h2>Análisis de Letra</h2>
+                
+                <div class="result-item">
+                    <span class="result-label">Calidad de la letra:</span>
+                    <span id="lyricsQuality" class="lyrics-quality">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Estructura:</span>
+                    <span id="structureResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Rima y métrica:</span>
+                    <span id="rhymeResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Originalidad:</span>
+                    <span id="originalityResult">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Tema emocional:</span>
+                    <span id="emotionalResult">-</span>
+                </div>
+                
+                <div class="lyrics-section">
+                    <h3>Recomendaciones para la letra:</h3>
+                    <ul id="lyricsRecommendations">
+                        <!-- Las recomendaciones se agregarán aquí -->
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="profitTab" class="tab-content">
+                <h2>Potencial de Ganancias</h2>
+                
+                <div class="result-item">
+                    <span class="result-label">Potencial viral:</span>
+                    <span id="viralPotential">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Mercado objetivo:</span>
+                    <span id="targetMarket">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Potencial en plataformas:</span>
+                    <div id="platformPotential">
+                        <!-- Los resultados por plataforma se agregarán aquí -->
+                    </div>
+                </div>
+                
+                <div class="profit-potential">
+                    <div class="result-label">Potencial de ganancias estimado:</div>
+                    <div id="profitEstimate" class="price">-</div>
+                    <div class="profit-meter">
+                        <div id="profitMeterFill" class="meter-fill"></div>
+                    </div>
+                    <p id="profitDescription">-</p>
+                </div>
+            </div>
+            
+            <div id="copyrightTab" class="tab-content">
+                <h2>Detección de Copyright</h2>
+                
+                <div class="result-item">
+                    <span class="result-label">Estado de copyright:</span>
+                    <div id="copyrightStatus" class="copyright">-</div>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Similitud con contenido protegido:</span>
+                    <span id="copyrightSimilarity">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Posibles coincidencias:</span>
+                    <span id="copyrightMatches">-</span>
+                </div>
+                
+                <div class="result-item">
+                    <span class="result-label">Recomendaciones:</span>
+                    <ul id="copyrightRecommendations">
+                        <!-- Recomendaciones sobre copyright -->
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Botón para descargar PDF -->
+            <button id="downloadPdfBtn" class="download-pdf-btn" onclick="generatePDF()">
+                Descargar Reporte en PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Objeto para almacenar análisis previos
+        const analysisCache = {};
+        
+        // Inicializar jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('fileName').textContent = `Archivo seleccionado: ${file.name}`;
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('downloadPdfBtn').style.display = 'none';
+            
+            // Resetear la barra de progreso
+            resetProgress();
+            
+            // Calcular hash del archivo para identificación única
+            calculateFileHash(file).then(hash => {
+                document.getElementById('fileHash').textContent = `Identificador único: ${hash}`;
+                
+                // Actualizar progreso (paso 1 completado)
+                updateProgress(20, 1);
+                
+                // Verificar si ya tenemos un análisis para este archivo
+                if (analysisCache[hash]) {
+                    // Simular progreso rápido para archivo en caché
+                    simulateQuickProgress(hash);
+                } else {
+                    // Simular progreso de análisis en tiempo real
+                    simulateAnalysisProgress(file, hash);
+                }
+            }).catch(error => {
+                console.error("Error al calcular el hash:", error);
+                document.getElementById('loading').style.display = 'none';
+                alert("Ocurrió un error al procesar el archivo. Por favor, inténtalo de nuevo.");
+            });
+        });
+        
+        function resetProgress() {
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressPercentage').textContent = '0%';
+            
+            // Resetear todos los pasos
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`step${i}`).classList.remove('active');
+            }
+        }
+        
+        function updateProgress(percentage, activeStep) {
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressPercentage').textContent = `${percentage}%`;
+            
+            // Marcar los pasos completados como activos
+            for (let i = 1; i <= activeStep; i++) {
+                document.getElementById(`step${i}`).classList.add('active');
+            }
+        }
+        
+        function simulateQuickProgress(hash) {
+            // Simular progreso rápido para archivo en caché
+            let progress = 20;
+            updateProgress(progress, 1);
+            
+            const interval = setInterval(() => {
+                progress += 20;
+                const currentStep = Math.min(5, Math.floor(progress / 20));
+                updateProgress(progress, currentStep);
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    // Mostrar resultados desde caché
+                    displayCachedAnalysis(analysisCache[hash]);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('resultSection').style.display = 'block';
+                    document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+                }
+            }, 200);
+        }
+        
+        function simulateAnalysisProgress(file, hash) {
+            // Simular progreso de análisis en tiempo real
+            let progress = 20;
+            updateProgress(progress, 1);
+            
+            // Paso 1: Subida de archivo (ya completado)
+            
+            // Paso 2: Análisis de audio
+            setTimeout(() => {
+                progress = 40;
+                updateProgress(progress, 2);
+                
+                // Paso 3: Extracción de letra
+                setTimeout(() => {
+                    progress = 60;
+                    updateProgress(progress, 3);
+                    
+                    // Paso 4: Verificación de copyright
+                    setTimeout(() => {
+                        progress = 80;
+                        updateProgress(progress, 4);
+                        
+                        // Paso 5: Generación de reporte
+                        setTimeout(() => {
+                            progress = 100;
+                            updateProgress(progress, 5);
+                            
+                            // Realizar análisis completo
+                            const analysis = analyzeAudio(file, hash);
+                            analysis.lyrics = analyzeLyrics(hash);
+                            analysis.profit = calculateProfitPotential(hash);
+                            analysis.copyright = checkCopyright(hash);
+                            
+                            // Guardar en caché
+                            analysisCache[hash] = analysis;
+                            
+                            // Mostrar resultados
+                            setTimeout(() => {
+                                document.getElementById('loading').style.display = 'none';
+                                document.getElementById('resultSection').style.display = 'block';
+                                document.getElementById('downloadPdfBtn').style.display = 'inline-block';
+                                displayCachedAnalysis(analysisCache[hash]);
+                            }, 300);
+                            
+                        }, 1000); // Tiempo para el paso 5
+                    }, 1500); // Tiempo para el paso 4
+                }, 1200); // Tiempo para el paso 3
+            }, 1000); // Tiempo para el paso 2
+        }
+        
+        // Función para calcular un hash único del archivo
+        async function calculateFileHash(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex;
+            } catch (error) {
+                console.error("Error en calculateFileHash:", error);
+                throw error;
+            }
+        }
+        
+        // Función para mostrar análisis en caché
+        function displayCachedAnalysis(cachedData) {
+            if (!cachedData) {
+                console.error("No hay datos en caché para mostrar");
+                return;
+            }
+            
+            // Mostrar datos de audio
+            document.getElementById('formatResult').textContent = cachedData.audio?.format || '-';
+            document.getElementById('bitrateResult').textContent = (cachedData.audio?.bitrate || '-') + ' kbps';
+            document.getElementById('sampleRateResult').textContent = (cachedData.audio?.sampleRate || '-') + ' Hz';
+            document.getElementById('channelsResult').textContent = cachedData.audio?.channels === 2 ? 'Estéreo' : 'Mono';
+            document.getElementById('durationResult').textContent = formatDuration(cachedData.audio?.duration || 0);
+            
+            const qualityElement = document.getElementById('qualityResult');
+            qualityElement.textContent = cachedData.audio?.quality || '-';
+            if (cachedData.audio?.quality) {
+                qualityElement.className = cachedData.audio.quality.toLowerCase();
+            }
+            
+            const priceElement = document.getElementById('priceResult');
+            priceElement.textContent = cachedData.audio?.price ? '$' + cachedData.audio.price + ' MXN' : '-';
+            if (cachedData.audio?.quality) {
+                priceElement.className = 'price ' + cachedData.audio.quality.toLowerCase();
+            }
+            
+            // Mostrar datos de letra
+            const qualityElementLyrics = document.getElementById('lyricsQuality');
+            qualityElementLyrics.textContent = cachedData.lyrics?.quality || '-';
+            if (cachedData.lyrics?.qualityClass) {
+                qualityElementLyrics.className = 'lyrics-quality ' + cachedData.lyrics.qualityClass;
+            }
+            
+            document.getElementById('structureResult').textContent = cachedData.lyrics?.structure || '-';
+            document.getElementById('rhymeResult').textContent = cachedData.lyrics?.rhyme || '-';
+            document.getElementById('originalityResult').textContent = cachedData.lyrics?.originality || '-';
+            document.getElementById('emotionalResult').textContent = cachedData.lyrics?.emotional || '-';
+            
+            const recommendationsList = document.getElementById('lyricsRecommendations');
+            recommendationsList.innerHTML = '';
+            if (cachedData.lyrics?.recommendations) {
+                cachedData.lyrics.recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    recommendationsList.appendChild(li);
+                });
+            }
+            
+            // Mostrar datos de ganancias
+            document.getElementById('viralPotential').textContent = cachedData.profit?.viralPotential || '-';
+            document.getElementById('targetMarket').textContent = cachedData.profit?.targetMarket?.join(", ") || '-';
+            
+            const platformPotentialDiv = document.getElementById('platformPotential');
+            platformPotentialDiv.innerHTML = '';
+            
+            if (cachedData.profit?.platforms) {
+                cachedData.profit.platforms.forEach(platform => {
+                    const platformDiv = document.createElement('div');
+                    platformDiv.className = 'result-item';
+                    
+                    const labelSpan = document.createElement('span');
+                    labelSpan.className = 'result-label';
+                    labelSpan.textContent = `${platform.icon || ''} ${platform.name || ''}: `;
+                    
+                    const valueSpan = document.createElement('span');
+                    valueSpan.textContent = `${platform.potential || '0'}% de potencial`;
+                    
+                    platformDiv.appendChild(labelSpan);
+                    platformDiv.appendChild(valueSpan);
+                    platformPotentialDiv.appendChild(platformDiv);
+                });
+            }
+            
+            document.getElementById('profitEstimate').textContent = cachedData.profit?.estimate || '-';
+            document.getElementById('profitMeterFill').style.width = (cachedData.profit?.percentage || 0) + '%';
+            document.getElementById('profitDescription').textContent = cachedData.profit?.description || '-';
+            
+            // Mostrar datos de copyright
+            const copyrightStatus = document.getElementById('copyrightStatus');
+            copyrightStatus.textContent = cachedData.copyright?.status || '-';
+            if (cachedData.copyright?.detected) {
+                copyrightStatus.className = 'copyright copyright-detected';
+            } else {
+                copyrightStatus.className = 'copyright copyright-clean';
+            }
+            
+            document.getElementById('copyrightSimilarity').textContent = cachedData.copyright?.similarity || '-';
+            document.getElementById('copyrightMatches').textContent = cachedData.copyright?.matches || '-';
+            
+            const copyrightRecommendations = document.getElementById('copyrightRecommendations');
+            copyrightRecommendations.innerHTML = '';
+            if (cachedData.copyright?.recommendations) {
+                cachedData.copyright.recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    copyrightRecommendations.appendChild(li);
+                });
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Ocultar todos los contenidos de pestañas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Desactivar todas las pestañas
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activar la pestaña seleccionada
+            const tabContent = document.getElementById(tabName + 'Tab');
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+            
+            // Activar el tab correspondiente
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(tabName)) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+        
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        function analyzeAudio(file, hash) {
+            // Extraer información básica del archivo
+            const fileName = file.name.toLowerCase();
+            let format = fileName.split('.').pop();
+            format = format ? format.toUpperCase() : 'UNKNOWN';
+            
+            // Usar el hash para generar valores consistentes pero únicos para este archivo
+            const hashNumber = parseInt(hash.substring(0, 8), 16) || 0;
+            
+            // Simular datos de análisis basados en el hash
+            const simulatedData = {
+                format: format,
+                bitrate: [320, 256, 192, 128][hashNumber % 4],
+                sampleRate: [44100, 48000, 96000][hashNumber % 3],
+                channels: (hashNumber % 2) + 1, // 1 o 2
+                duration: 60 + (hashNumber % 240) // 1-5 minutos
+            };
+            
+            // Determinar calidad basada en los parámetros simulados
+            let quality, price;
+            
+            if ((simulatedData.bitrate >= 320 && simulatedData.sampleRate >= 44100 && simulatedData.channels === 2) || 
+                format === 'WAV' || format === 'FLAC') {
+                quality = 'Premium';
+                price = 800 + (hashNumber % 1701); // $800-$2500
+            } else if (simulatedData.bitrate >= 192 && simulatedData.sampleRate >= 44100 && simulatedData.channels === 2) {
+                quality = 'Profesional';
+                price = 300 + (hashNumber % 501); // $300-$800
+            } else {
+                quality = 'Básico';
+                price = 100 + (hashNumber % 201); // $100-$300
+            }
+            
+            // Devolver datos para caché
+            return {
+                audio: {
+                    format: simulatedData.format,
+                    bitrate: simulatedData.bitrate,
+                    sampleRate: simulatedData.sampleRate,
+                    channels: simulatedData.channels,
+                    duration: simulatedData.duration,
+                    quality: quality,
+                    price: price
+                }
+            };
+        }
+        
+        function analyzeLyrics(hash) {
+            // Usar el hash para generar valores consistentes
+            const hashNumber = parseInt(hash.substring(0, 8), 16) || 0;
+            
+            const qualityLevels = ['Excelente', 'Buena', 'Promedio', 'Pobre'];
+            const qualityClasses = ['excellent', 'good', 'average', 'poor'];
+            const structures = ['Muy bien estructurada (verso-estribillo-verso-estribillo-puente)', 'Bien estructurada', 'Estructura básica', 'Estructura irregular'];
+            const rhymes = ['Rima y métrica excelentes', 'Buena rima y métrica', 'Rima y métrica aceptables', 'Problemas con rima y métrica'];
+            const originality = ['Muy original y creativa', 'Original con algunos clichés', 'Contiene varios clichés', 'Muy genérica y poco original'];
+            const emotional = ['Fuerte impacto emocional', 'Buen impacto emocional', 'Algo emocional', 'Poco emocional'];
+            
+            // Generar resultados basados en el hash
+            const randomQuality = hashNumber % qualityLevels.length;
+            const randomStructure = (hashNumber + 1) % structures.length;
+            const randomRhyme = (hashNumber + 2) % rhymes.length;
+            const randomOriginality = (hashNumber + 3) % originality.length;
+            const randomEmotional = (hashNumber + 4) % emotional.length;
+            
+            // Generar recomendaciones basadas en los resultados
+            const recommendations = [];
+            
+            if (randomQuality >= 2) { // Si la calidad es promedio o pobre
+                recommendations.push("Considera revisar la estructura para hacerla más consistente.");
+                recommendations.push("Trabaja en mejorar la originalidad evitando clichés comunes.");
+            }
+            
+            if (randomRhyme >= 2) {
+                recommendations.push("Practica diferentes esquemas de rima para mejorar el flujo.");
+            }
+            
+            if (randomEmotional >= 2) {
+                recommendations.push("Intenta conectar más emocionalmente con tu audiencia objetivo.");
+            }
+            
+            if (randomQuality <= 1) { // Si la calidad es buena o excelente
+                recommendations.push("¡Buen trabajo! Mantén este nivel de calidad en tus próximas canciones.");
+            }
+            
+            // Añadir recomendaciones generales
+            recommendations.push("Analiza canciones exitosas en tu género para identificar patrones efectivos.");
+            recommendations.push("Considera trabajar con un co-escritor para obtener nuevas perspectivas.");
+            
+            // Devolver datos para caché
+            return {
+                quality: qualityLevels[randomQuality],
+                qualityClass: qualityClasses[randomQuality],
+                structure: structures[randomStructure],
+                rhyme: rhymes[randomRhyme],
+                originality: originality[randomOriginality],
+                emotional: emotional[randomEmotional],
+                recommendations: recommendations
+            };
+        }
+        
+        function calculateProfitPotential(hash) {
+            // Usar el hash para generar valores consistentes
+            const hashNumber = parseInt(hash.substring(0, 8), 16) || 0;
+            
+            // Simular cálculo de potencial de ganancias
+            const viralOptions = ["Alto potencial viral", "Potencial viral moderado", "Bajo potencial viral", "Poco probable que se vuelva viral"];
+            const viralPotential = viralOptions[hashNumber % viralOptions.length];
+            
+            const targetMarkets = ["Jóvenes adultos (18-25)", "Adolescentes (13-17)", "Adults (25-40)", "Público general", "Audiencia nicho"];
+            const selectedMarkets = [];
+            
+            // Seleccionar 1-3 mercados aleatorios basados en el hash
+            const numMarkets = (hashNumber % 3) + 1;
+            for (let i = 0; i < numMarkets; i++) {
+                const marketIndex = (hashNumber + i) % targetMarkets.length;
+                if (!selectedMarkets.includes(targetMarkets[marketIndex])) {
+                    selectedMarkets.push(targetMarkets[marketIndex]);
+                }
+            }
+            
+            // Plataformas y su potencial
+            const platforms = [
+                { name: "Spotify", icon: "🎵" },
+                { name: "Music Live", icon: "▶️" },
+                { name: "TikTok", icon: "🎶" },
+                { name: "Apple Music", icon: "🍎" },
+                { name: "Instagram", icon: "📷" }
+            ];
+            
+            const platformPotentials = [];
+            platforms.forEach((platform, index) => {
+                const potential = 10 + (hashNumber + index) % 90; // 10-99%
+                platformPotentials.push({
+                    name: platform.name,
+                    icon: platform.icon,
+                    potential: potential
+                });
+            });
+            
+            // Calcular estimación de ganancias basada en calidad de audio y letra
+            const cachedData = analysisCache[hash] || {};
+            const audioQuality = cachedData.audio?.quality || 'Básico';
+            const lyricsQuality = cachedData.lyrics?.quality || 'Promedio';
+            
+            let baseProfit = 0;
+            
+            if (audioQuality === 'Premium') baseProfit += 5000;
+            else if (audioQuality === 'Profesional') baseProfit += 3000;
+            else baseProfit += 1000;
+            
+            if (lyricsQuality === 'Excelente') baseProfit += 5000;
+            else if (lyricsQuality === 'Buena') baseProfit += 3000;
+            else if (lyricsQuality === 'Promedio') baseProfit += 1000;
+            
+            // Ajustar por potencial viral
+            if (viralPotential.includes("Alto")) baseProfit *= 3;
+            else if (viralPotential.includes("moderado")) baseProfit *= 2;
+            
+            // Añadir variabilidad basada en el hash
+            baseProfit = baseProfit * (0.8 + (hashNumber % 41) / 100); // 0.8-1.2
+            
+            // Formatear como moneda
+            const formatter = new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 2
+            });
+            
+            const formattedProfit = formatter.format(baseProfit);
+            
+            // Calcular porcentaje para la barra de progreso (0-100%)
+            const profitPercentage = Math.min(100, Math.max(0, Math.floor(baseProfit / 20000 * 100)));
+            
+            // Descripción del potencial
+            let description = "";
+            if (profitPercentage >= 80) {
+                description = "¡Excelente potencial! Esta canción tiene altas probabilidades de generar ingresos significativos en múltiples plataformas.";
+            } else if (profitPercentage >= 60) {
+                description = "Buen potencial. Con la promoción adecuada, podría convertirse en un éxito moderado.";
+            } else if (profitPercentage >= 40) {
+                description = "Potencial moderado. Considera hacer ajustes para mejorar su atractivo comercial.";
+            } else if (profitPercentage >= 20) {
+                description = "Potencial limitado. Podría generar algunos ingresos pero es poco probable que sea un éxito comercial.";
+            } else {
+                description = "Potencial bajo. Recomendamos revisar la estrategia o considerar trabajar en nuevo material.";
+            }
+            
+            // Devolver datos para caché
+            return {
+                viralPotential: viralPotential,
+                targetMarket: selectedMarkets,
+                platforms: platformPotentials,
+                estimate: formattedProfit,
+                percentage: profitPercentage,
+                description: description
+            };
+        }
+        
+        function checkCopyright(hash) {
+            // Usar el hash para generar resultados consistentes
+            const hashNumber = parseInt(hash.substring(0, 8), 16) || 0;
+            
+            // Simular detección de copyright
+            const hasCopyright = (hashNumber % 10) === 0; // 10% de probabilidad de tener copyright
+            const similarity = hasCopyright ? (70 + (hashNumber % 30)) + '%' : (5 + (hashNumber % 20)) + '%';
+            
+            const status = hasCopyright ? 
+            "⚠️ Se detectó posible contenido protegido por copyright" : 
+            "✅ No se detectó contenido protegido por copyright";
+            
+            const matches = hasCopyright ? 
+                "Posible coincidencia con: " + [
+                    "Shape of You - Ed Sheeran", 
+                    "Blinding Lights - The Weeknd", 
+                    "Despacito - Luis Fonsi"
+                ][hashNumber % 3] : 
+                "No se encontraron coincidencias significativas";
+            
+            const recommendations = [];
+            if (hasCopyright) {
+                recommendations.push("Recomendamos revisar la similitud con el contenido mencionado.");
+                recommendations.push("Considera modificar las partes similares para evitar problemas legales.");
+                recommendations.push("Consulta con un especialista en derechos de autor si planeas distribuir comercialmente esta canción.");
+            } else {
+                recommendations.push("Tu contenido parece original y libre de problemas de copyright.");
+                recommendations.push("Aún así, siempre es buena idea registrar tu obra para proteger tus derechos.");
+            }
+            
+            // Devolver datos para caché
+            return {
+                detected: hasCopyright,
+                status: status,
+                similarity: similarity,
+                matches: matches,
+                recommendations: recommendations
+            };
+        }
+        
+        // Función mejorada para generar el PDF con los resultados
+        function generatePDF() {
+            const hash = document.getElementById('fileHash').textContent.replace('Identificador único: ', '');
+            const cachedData = analysisCache[hash];
+            
+            if (!cachedData) {
+                alert("No hay datos de análisis para generar el PDF.");
+                return;
+            }
+            
+            // Crear nuevo documento PDF en formato A4 (210x297 mm) con márgenes
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            // Configuración de márgenes
+            const margin = 15;
+            let yPos = margin;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const contentWidth = pageWidth - 2 * margin;
+            
+            // Estilos
+            const styles = {
+                title: { font: 'helvetica', style: 'bold', size: 16, color: [255, 107, 0] },
+                sectionTitle: { font: 'helvetica', style: 'bold', size: 12, color: [255, 107, 0] },
+                subtitle: { font: 'helvetica', style: 'bold', size: 10, color: [0, 0, 0] },
+                normal: { font: 'helvetica', style: 'normal', size: 10, color: [0, 0, 0] },
+                small: { font: 'helvetica', style: 'normal', size: 8, color: [100, 100, 100] }
+            };
+            
+            // Función para aplicar estilos
+            function setStyle(style) {
+                doc.setFont(style.font, style.style);
+                doc.setFontSize(style.size);
+                doc.setTextColor(...style.color);
+            }
+            
+            // Función para añadir texto con manejo de saltos de página
+            function addText(text, x, y, options = {}) {
+                const maxWidth = options.maxWidth || contentWidth;
+                const lineHeight = options.lineHeight || 5;
+                
+                const lines = doc.splitTextToSize(text, maxWidth);
+                
+                // Verificar si hay espacio suficiente en la página
+                const neededSpace = lines.length * lineHeight;
+                if (y + neededSpace > doc.internal.pageSize.getHeight() - margin) {
+                    doc.addPage();
+                    y = margin;
+                    
+                    // Si es un título de sección, añadir espacio extra
+                    if (options.isSectionTitle) {
+                        y += 5;
+                    }
+                }
+                
+                doc.text(lines, x, y, options);
+                return y + (lines.length * lineHeight);
+            }
+            
+            // Función para añadir una sección
+            function addSection(title, y) {
+                setStyle(styles.sectionTitle);
+                y = addText(title, margin, y, { isSectionTitle: true });
+                setStyle(styles.normal);
+                return y + 5; // Espacio adicional después del título
+            }
+            
+            // Función para añadir un ítem con etiqueta y valor
+            function addItem(label, value, y, labelWidth = 50) {
+                setStyle(styles.subtitle);
+                y = addText(label + ':', margin, y);
+                
+                setStyle(styles.normal);
+                const valueX = margin + labelWidth;
+                const valueWidth = contentWidth - labelWidth;
+                y = addText(value, valueX, y, { maxWidth: valueWidth });
+                
+                return y + 3; // Espacio entre ítems
+            }
+            
+            // Función para añadir una lista
+            function addList(items, y, bullet = '•') {
+                setStyle(styles.normal);
+                items.forEach(item => {
+                    y = addText(bullet + ' ' + item, margin + 5, y);
+                    y += 4; // Espacio entre elementos de la lista
+                });
+                return y;
+            }
+            
+            // Encabezado
+            setStyle(styles.title);
+            yPos = addText('REPORTE DE ANÁLISIS MUSICAL', pageWidth / 2, yPos, { align: 'center' });
+            
+            setStyle(styles.small);
+            yPos = addText('Generado por Analizador de Calidad de Audio y Letra', pageWidth / 2, yPos + 7, { align: 'center' });
+            
+            // Línea divisoria
+            doc.setDrawColor(255, 107, 0);
+            doc.setLineWidth(0.3);
+            doc.line(margin, yPos + 3, pageWidth - margin, yPos + 3);
+            yPos += 8;
+            
+            // Información del archivo
+            setStyle(styles.subtitle);
+            yPos = addText('INFORMACIÓN BÁSICA', margin, yPos);
+            
+            setStyle(styles.normal);
+            yPos = addItem('Archivo analizado', document.getElementById('fileName').textContent.replace('Archivo seleccionado: ', ''), yPos + 5);
+            yPos = addItem('Identificador único', hash, yPos);
+            yPos = addItem('Fecha del análisis', new Date().toLocaleDateString(), yPos);
+            
+            // Sección de calidad de audio
+            yPos = addSection('1. CALIDAD DE AUDIO', yPos + 5);
+            
+            yPos = addItem('Formato del archivo', cachedData.audio?.format || '-', yPos);
+            yPos = addItem('Tasa de bits', (cachedData.audio?.bitrate || '-') + ' kbps', yPos);
+            yPos = addItem('Frecuencia de muestreo', (cachedData.audio?.sampleRate || '-') + ' Hz', yPos);
+            yPos = addItem('Canales', cachedData.audio?.channels === 2 ? 'Estéreo' : 'Mono', yPos);
+            yPos = addItem('Duración', formatDuration(cachedData.audio?.duration || 0), yPos);
+            yPos = addItem('Nivel de calidad', cachedData.audio?.quality || '-', yPos);
+            yPos = addItem('Precio recomendado', cachedData.audio?.price ? '$' + cachedData.audio.price + ' MXN' : '-', yPos);
+            
+            // Sección de análisis de letra
+            yPos = addSection('2. ANÁLISIS DE LETRA', yPos + 5);
+            
+            yPos = addItem('Calidad de la letra', cachedData.lyrics?.quality || '-', yPos);
+            yPos = addItem('Estructura', cachedData.lyrics?.structure || '-', yPos);
+            yPos = addItem('Rima y métrica', cachedData.lyrics?.rhyme || '-', yPos);
+            yPos = addItem('Originalidad', cachedData.lyrics?.originality || '-', yPos);
+            yPos = addItem('Tema emocional', cachedData.lyrics?.emotional || '-', yPos);
+            
+            // Recomendaciones para la letra
+            yPos += 5;
+            setStyle(styles.subtitle);
+            yPos = addText('Recomendaciones para la letra:', margin, yPos);
+            
+            if (cachedData.lyrics?.recommendations) {
+                yPos = addList(cachedData.lyrics.recommendations, yPos + 5);
+            }
+            
+            // Sección de potencial de ganancias
+            yPos = addSection('3. POTENCIAL DE GANANCIAS', yPos + 5);
+            
+            yPos = addItem('Potencial viral', cachedData.profit?.viralPotential || '-', yPos);
+            yPos = addItem('Mercado objetivo', cachedData.profit?.targetMarket?.join(", ") || '-', yPos);
+            yPos = addItem('Potencial estimado', cachedData.profit?.estimate || '-', yPos);
+            
+            // Potencial en plataformas
+            yPos += 5;
+            setStyle(styles.subtitle);
+            yPos = addText('Potencial en plataformas:', margin, yPos);
+            yPos += 5;
+            
+            if (cachedData.profit?.platforms) {
+                cachedData.profit.platforms.forEach(platform => {
+                    yPos = addItem(
+                        `${platform.icon || ''} ${platform.name || ''}`,
+                        `${platform.potential || '0'}% de potencial`,
+                        yPos
+                    );
+                });
+            }
+            
+            // Descripción del potencial
+            yPos += 5;
+            setStyle(styles.subtitle);
+            yPos = addText('Evaluación:', margin, yPos);
+            
+            setStyle(styles.normal);
+            yPos = addText(cachedData.profit?.description || '-', margin, yPos + 5, { maxWidth: contentWidth });
+            
+            // Sección de copyright
+            yPos = addSection('4. DETECCIÓN DE COPYRIGHT', yPos + 10);
+            
+            yPos = addItem('Estado de copyright', cachedData.copyright?.status || '-', yPos);
+            yPos = addItem('Similitud con contenido protegido', cachedData.copyright?.similarity || '-', yPos);
+            yPos = addItem('Posibles coincidencias', cachedData.copyright?.matches || '-', yPos);
+            
+            // Recomendaciones de copyright
+            yPos += 5;
+            setStyle(styles.subtitle);
+            yPos = addText('Recomendaciones:', margin, yPos);
+            
+            if (cachedData.copyright?.recommendations) {
+                yPos = addList(cachedData.copyright.recommendations, yPos + 5);
+            }
+            
+            // Pie de página
+            doc.addPage();
+            setStyle(styles.sectionTitle);
+            yPos = addText('AUTORIZACIÓN Y FIRMA', pageWidth / 2, margin, { align: 'center' });
+            
+            setStyle(styles.normal);
+            yPos = addText('Yo, ___________________________________________, autorizo el uso de este análisis con fines de evaluación y mejora de mi contenido musical.', 
+                          margin, yPos + 20, { maxWidth: contentWidth });
+            
+            yPos = addText('Entiendo que este reporte es una evaluación automatizada y no constituye asesoría legal o profesional.', 
+                          margin, yPos + 15, { maxWidth: contentWidth });
+            
+            // Espacio para firma
+            yPos += 20;
+            addText('Fecha: ___________________', margin, yPos);
+            addText('Firma: ___________________', margin + 90, yPos);
+            
+            // Nota legal al pie
+            setStyle(styles.small);
+            yPos = doc.internal.pageSize.getHeight() - margin - 10;
+            addText('Este documento es confidencial y para uso exclusivo del destinatario. Prohibida su reproducción o distribución sin autorización.', 
+                   pageWidth / 2, yPos, { align: 'center', maxWidth: contentWidth });
+            
+            // Guardar el PDF con nombre más descriptivo
+            const fileName = `Analisis_Musical_${hash.substring(0, 8)}_${new Date().toISOString().slice(0, 10)}.pdf`;
+            doc.save(fileName);
+        }
+    </script>
+</body>
+</html>

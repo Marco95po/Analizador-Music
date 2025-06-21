@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Inferior con Video de Fondo</title>
+    <title>Acceso - Music Live</title>
     <style>
         body {
             margin: 0;
@@ -12,6 +12,90 @@
             height: 100vh;
             overflow: hidden;
             position: relative;
+            background-color: #121212;
+            color: white;
+        }
+        
+        .access-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 165, 0, 0.2);
+        }
+        
+        .access-container h2 {
+            color: #FFA500;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .access-container p {
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: #ddd;
+        }
+        
+        .access-code {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .access-code input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.5rem;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .access-code input:focus {
+            border-color: #FFA500;
+            outline: none;
+            background-color: rgba(255, 165, 0, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .submit-btn {
+            background-color: #FFA500;
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .submit-btn:hover {
+            background-color: #FFD700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 165, 0, 0.4);
+        }
+        
+        .error-message {
+            color: #ff4444;
+            margin-top: 15px;
+            height: 20px;
+            font-size: 0.9rem;
         }
         
         .video-background {
@@ -23,8 +107,7 @@
             transform: translate(-50%, -50%);
             z-index: -1;
             overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-in-out forwards;
+            opacity: 0.3;
         }
         
         .video-background video {
@@ -36,20 +119,19 @@
             left: 0;
         }
         
-        @media (min-aspect-ratio: 16/9) {
-            .video-background video {
-                width: 100%;
-                height: auto;
-            }
+        .hidden {
+            display: none !important;
         }
         
-        @media (max-aspect-ratio: 16/9) {
-            .video-background video {
-                width: auto;
-                height: 100%;
-            }
+        /* Estilos para el contenido principal (se mostrarán después del acceso) */
+        .main-content {
+            display: none;
+            height: 100vh;
+            width: 100%;
+            position: relative;
         }
         
+        /* Mantenemos todos los estilos originales para cuando se muestre el contenido */
         .overlay {
             position: absolute;
             top: 0;
@@ -58,8 +140,6 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.4);
             z-index: -1;
-            opacity: 0;
-            animation: fadeIn 1s ease-in-out 0.5s forwards;
         }
         
         .bottom-menu {
@@ -73,7 +153,7 @@
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
             border-top: 1px solid rgba(255, 165, 0, 0.3);
-            animation: slideUp 0.8s ease-out 1.2s forwards;
+            animation: slideUp 0.8s ease-out forwards;
         }
         
         .menu-button {
@@ -91,21 +171,6 @@
             text-align: center;
             font-weight: bold;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        .menu-button:nth-child(1) {
-            animation-delay: 1.5s;
-        }
-        
-        .menu-button:nth-child(2) {
-            animation-delay: 1.7s;
-        }
-        
-        .menu-button:nth-child(3) {
-            animation-delay: 1.9s;
         }
         
         .menu-button:hover {
@@ -115,7 +180,6 @@
             transform: translateY(-2px);
         }
         
-        /* Estilos para el título */
         .main-title {
             position: absolute;
             top: 20%;
@@ -125,9 +189,6 @@
             color: white;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
             z-index: 1;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 1s ease-out 0.8s forwards;
         }
         
         .main-title h1 {
@@ -140,17 +201,11 @@
         .main-title .line1 {
             color: #FFA500;
             font-weight: bold;
-            display: inline-block;
-            opacity: 0;
-            animation: fadeInLeft 0.8s ease-out 1s forwards;
         }
         
         .main-title .line2 {
             font-size: 2.5rem;
             font-weight: normal;
-            display: inline-block;
-            opacity: 0;
-            animation: fadeInRight 0.8s ease-out 1.2s forwards;
         }
         
         .main-title .subtitle {
@@ -162,11 +217,8 @@
             margin-left: auto;
             margin-right: auto;
             line-height: 1.4;
-            opacity: 0;
-            animation: fadeIn 1s ease-out 1.5s forwards;
         }
         
-        /* Estilos para el botón de cerrar sesión */
         .logout-button {
             position: fixed;
             top: 20px;
@@ -180,8 +232,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
-            opacity: 0;
-            animation: fadeIn 0.8s ease-out 1s forwards;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -217,44 +267,15 @@
                 top: 15px;
                 left: 15px;
             }
-        }
-        
-        /* Animaciones */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+            
+            .access-container {
+                padding: 20px;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        @keyframes fadeInRight {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
+            
+            .access-code input {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
             }
         }
         
@@ -266,10 +287,15 @@
                 bottom: 0;
             }
         }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <!-- Video de fondo -->
+    <!-- Video de fondo para la pantalla de acceso -->
     <div class="video-background">
         <video id="bgVideo" autoplay muted loop playsinline>
             <source src="https://www.dropbox.com/scl/fi/uapgxve71kg837vaa9k81/122748-726192594_small.mp4?rlkey=zh61qjpsmwpnc7s37ibuwofam&st=t1h9lraf&raw=1" type="video/mp4">
@@ -277,60 +303,148 @@
         </video>
     </div>
     
-    <!-- Capa oscura para mejorar legibilidad -->
-    <div class="overlay"></div>
-    
-    <!-- Botón de cerrar sesión -->
-    <button class="logout-button" onclick="window.location.href='index.html'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
-            <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-        </svg>
-        Cerrar sesión
-    </button>
-    
-    <!-- Título principal -->
-    <div class="main-title">
-        <h1>
-            <span class="line1">Analizador de música</span><br>
-            <span class="line2">Music Live</span>
-        </h1>
-        <p class="subtitle">Analizamos tu música para ofrecerte una experiencia de escucha profesional</p>
+    <!-- Contenedor de acceso -->
+    <div class="access-container" id="accessContainer">
+        <h2>Acceso Restringido</h2>
+        <p>Por favor, introduce el código de acceso para continuar:</p>
+        
+        <div class="access-code">
+            <input type="text" maxlength="1" data-index="0" autofocus>
+            <input type="text" maxlength="1" data-index="1">
+            <input type="text" maxlength="1" data-index="2">
+            <input type="text" maxlength="1" data-index="3">
+        </div>
+        
+        <button class="submit-btn" id="submitBtn">Verificar Código</button>
+        <div class="error-message" id="errorMessage"></div>
     </div>
     
-    <!-- Menú inferior transparente -->
-    <div class="bottom-menu">
-        <button class="menu-button" onclick="window.location.href='Analizar.html'">Analizar música</button>
-        <button class="menu-button" onclick="window.location.href='Formulario.html'">Formulario</button>
-        <button class="menu-button">boton 3</button>
+    <!-- Contenido principal (oculto inicialmente) -->
+    <div class="main-content" id="mainContent">
+        <!-- Video de fondo -->
+        <div class="video-background">
+            <video id="mainBgVideo" autoplay muted loop playsinline>
+                <source src="https://www.dropbox.com/scl/fi/uapgxve71kg837vaa9k81/122748-726192594_small.mp4?rlkey=zh61qjpsmwpnc7s37ibuwofam&st=t1h9lraf&raw=1" type="video/mp4">
+                Tu navegador no soporta videos HTML5.
+            </video>
+        </div>
+        
+        <!-- Capa oscura para mejorar legibilidad -->
+        <div class="overlay"></div>
+        
+        <!-- Botón de cerrar sesión -->
+        <button class="logout-button" onclick="window.location.href='index.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+                <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+            </svg>
+            Cerrar sesión
+        </button>
+        
+        <!-- Título principal -->
+        <div class="main-title">
+            <h1>
+                <span class="line1">Analizador de música</span><br>
+                <span class="line2">Music Live</span>
+            </h1>
+            <p class="subtitle">Analizamos tu música para ofrecerte una experiencia de escucha profesional</p>
+        </div>
+        
+        <!-- Menú inferior transparente -->
+        <div class="bottom-menu">
+            <button class="menu-button" onclick="window.location.href='Analizar.html'">Analizar música</button>
+            <button class="menu-button" onclick="window.location.href='Formulario.html'">Formulario</button>
+            <button class="menu-button">boton 3</button>
+        </div>
     </div>
 
     <script>
-        // Forzar la reproducción del video lo antes posible
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('bgVideo');
+        // Código de acceso válido
+        const ACCESS_CODE = "2029";
+        
+        // Elementos del DOM
+        const accessContainer = document.getElementById('accessContainer');
+        const mainContent = document.getElementById('mainContent');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const codeInputs = document.querySelectorAll('.access-code input');
+        
+        // Manejar el movimiento entre inputs del código
+        codeInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // Si se ingresó un carácter, pasar al siguiente input
+                if (e.target.value.length === 1) {
+                    if (index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                }
+            });
             
-            // Intentar reproducir el video
-            const playPromise = video.play();
+            // Manejar la tecla retroceso
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0) {
+                    if (index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                }
+            });
+        });
+        
+        // Función para verificar el código
+        function verifyCode() {
+            const enteredCode = Array.from(codeInputs).map(input => input.value).join('');
             
-            // En caso de que falle (por políticas de autoplay)
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Autoplay prevented: ", error);
-                    video.muted = true;
-                    video.play();
+            if (enteredCode === ACCESS_CODE) {
+                // Código correcto
+                errorMessage.textContent = '';
+                accessContainer.classList.add('hidden');
+                mainContent.style.display = 'block';
+                
+                // Forzar la reproducción del video principal
+                const mainVideo = document.getElementById('mainBgVideo');
+                if (mainVideo) {
+                    mainVideo.play().catch(error => {
+                        console.log("Autoplay prevented: ", error);
+                        mainVideo.muted = true;
+                        mainVideo.play();
+                    });
+                }
+                
+                // Mostrar animaciones del menú
+                document.querySelector('.bottom-menu').style.animation = 'slideUp 0.8s ease-out forwards';
+                
+            } else {
+                // Código incorrecto
+                errorMessage.textContent = 'Código incorrecto. Por favor, inténtalo de nuevo.';
+                codeInputs.forEach(input => {
+                    input.value = '';
+                    input.style.borderColor = '#ff4444';
+                    setTimeout(() => {
+                        input.style.borderColor = '#333';
+                    }, 1000);
                 });
+                codeInputs[0].focus();
+            }
+        }
+        
+        // Evento para el botón de verificación
+        submitBtn.addEventListener('click', verifyCode);
+        
+        // También verificar al presionar Enter en el último input
+        codeInputs[codeInputs.length - 1].addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                verifyCode();
             }
         });
         
-        // También intentar reproducir cuando la página esté completamente cargada
-        window.onload = function() {
+        // Forzar la reproducción del video de fondo de acceso
+        document.addEventListener('DOMContentLoaded', function() {
             const video = document.getElementById('bgVideo');
             video.muted = true;
             video.play().catch(error => {
-                console.log("Autoplay on window load prevented: ", error);
+                console.log("Autoplay prevented: ", error);
             });
-        };
+        });
     </script>
 </body>
 </html>

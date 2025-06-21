@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Live - Aplicación Interna</title>
+    <style>
+        :root {
+            --primary-bg: #000000;
+            --secondary-bg: #1a1a1a;
+            --accent: #FF6B00;
+            --text-light: #FFFFFF;
+            --text-gray: #CCCCCC;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: var(--secondary-bg);
+            padding: 20px 0;
+            border-bottom: 3px solid var(--accent);
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent);
+            text-align: center;
+        }
+        .tagline {
+            text-align: center;
+            color: var(--text-gray);
+            margin-top: 10px;
+        }
+        .section {
+            background-color: var(--secondary-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 4px 8px rgba(255, 107, 0, 0.1);
+        }
+        .section-title {
+            color: var(--accent);
+            font-size: 24px;
+            margin-top: 0;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+        }
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        .highlight-box {
+            background-color: rgba(255, 107, 0, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 15px;
+            margin: 20px 0;
+        }
+        ul.feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul.feature-list li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        ul.feature-list li:before {
+            content: "•";
+            color: var(--accent);
+            font-size: 24px;
+            position: absolute;
+            left: 5px;
+            top: -2px;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-bg);
+            margin-top: 40px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">MUSIC LIVE</div>
+            <div class="tagline">Aplicación Interna del Personal</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <div class="feature-icon">📲</div>
+            <h1 class="section-title">Plataforma Centralizada de Gestión Musical</h1>
+            <p>En nuestra aplicación interna del personal de Music Live, centralizamos y facilitamos todo lo relacionado con la música que los artistas desean vender a través de nuestra plataforma.</p>
+        </div>
+
+        <div class="section">
+            <div class="feature-icon">📦</div>
+            <h2 class="section-title">Gestión de Contenido Musical</h2>
+            <p>Aquí podrás subir, revisar y administrar las canciones o álbumes que los artistas nos presenten para su venta en Music Live.</p>
+            
+            <div class="highlight-box">
+                <strong>Características principales:</strong>
+                <ul class="feature-list">
+                    <li>Registro completo de cada envío musical</li>
+                    <li>Datos detallados del artista</li>
+                    <li>Gestión de contenido musical y metadatos</li>
+                    <li>Administración de portadas y artwork</li>
+                    <li>Sistema de revisión y aprobación</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="feature-icon">📝</div>
+            <h2 class="section-title">Formulario de Regalías</h2>
+            <p>Contamos con un formulario especial para el reporte de regalías, el cual se actualiza y envía cada tres meses.</p>
+            
+            <div class="highlight-box">
+                <strong>Funcionalidades clave:</strong>
+                <ul class="feature-list">
+                    <li>Control detallado de ganancias por artista</li>
+                    <li>Distribución transparente de regalías</li>
+                    <li>Reportes automáticos de ventas y reproducciones</li>
+                    <li>Sistema de notificación directa a artistas</li>
+                    <li>Estado de pagos en tiempo real</li>
+                </ul>
+            </div>
+            
+            <p><strong>Este sistema asegura una comunicación clara y justa, fortaleciendo nuestra relación con los creadores que confían en nosotros para distribuir su música.</strong></p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            &copy; 2023 Music Live - Todos los derechos reservados
+        </div>
+    </footer>
+</body>
+</html>

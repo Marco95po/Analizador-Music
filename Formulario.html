@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Estadísticas Monetarias</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --color-primary: #FF6B00; /* Naranja intenso */
+            --color-secondary: #1A1A1A; /* Negro oscuro */
+            --color-accent: #FF8C42; /* Naranja más claro */
+            --color-text: #E0E0E0; /* Gris claro para texto */
+            --color-bg: #121212; /* Fondo oscuro */
+            --color-card: #1E1E1E; /* Tarjetas más claras */
+            --color-border: #333333; /* Bordes */
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+        }
+        
+        h1 {
+            color: var(--color-primary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            color: var(--color-text);
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+        }
+        
+        .btn {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 25px;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .section {
+            background-color: var(--color-card);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .section-title {
+            margin-top: 0;
+            color: var(--color-primary);
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-primary);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF6B00'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        
+        /* Estilo para el balance (readonly) */
+        input[readonly] {
+            background-color: #2A2A2A;
+            color: var(--color-accent);
+            font-weight: bold;
+        }
+        
+        /* Efecto de hover en las secciones */
+        .section:hover {
+            transform: translateY(-3px);
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Estadísticas Monetarias</h1>
+    
+    <form id="estadisticasForm">
+        <div class="section">
+            <h2 class="section-title">Información General</h2>
+            <div class="form-group">
+                <label for="fecha">Fecha del Reporte:</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="responsable">Responsable:</label>
+                <input type="text" id="responsable" name="responsable" required placeholder="Nombre completo del responsable">
+            </div>
+            
+            <div class="form-group">
+                <label for="departamento">Departamento/Área:</label>
+                <input type="text" id="departamento" name="departamento" required placeholder="Ej: Finanzas, Ventas, etc.">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Estadísticas Monetarias</h2>
+            <div class="form-group">
+                <label for="ingresos">Ingresos Totales:</label>
+                <input type="number" id="ingresos" name="ingresos" step="0.01" min="0" required placeholder="0.00">
+            </div>
+            
+            <div class="form-group">
+                <label for="egresos">Egresos Totales:</label>
+                <input type="number" id="egresos" name="egresos" step="0.01" min="0" required placeholder="0.00">
+            </div>
+            
+            <div class="form-group">
+                <label for="balance">Balance Final:</label>
+                <input type="number" id="balance" name="balance" step="0.01" required placeholder="0.00" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="moneda">Moneda:</label>
+                <select id="moneda" name="moneda" required>
+                    <option value="">Seleccione una moneda</option>
+                    <option value="MXN">Peso Mexicano (MXN)</option>
+                    <option value="USD">Dólar Estadounidense (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="otra">Otra</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="detalle_egresos">Detalle de Egresos (opcional):</label>
+                <textarea id="detalle_egresos" name="detalle_egresos" rows="3" placeholder="Desglose de los principales egresos"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="detalle_ingresos">Detalle de Ingresos (opcional):</label>
+                <textarea id="detalle_ingresos" name="detalle_ingresos" rows="3" placeholder="Desglose de los principales ingresos"></textarea>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Observaciones</h2>
+            <div class="form-group">
+                <label for="observaciones">Notas Adicionales:</label>
+                <textarea id="observaciones" name="observaciones" rows="4" placeholder="Cualquier observación relevante sobre las estadísticas"></textarea>
+            </div>
+        </div>
+        
+        <button type="button" class="btn" onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button>
+    </form>
+
+    <script>
+        // Calcular balance automáticamente
+        document.getElementById('ingresos').addEventListener('input', calcularBalance);
+        document.getElementById('egresos').addEventListener('input', calcularBalance);
+        
+        function calcularBalance() {
+            const ingresos = parseFloat(document.getElementById('ingresos').value) || 0;
+            const egresos = parseFloat(document.getElementById('egresos').value) || 0;
+            const balance = ingresos - egresos;
+            document.getElementById('balance').value = balance.toFixed(2);
+        }
+        
+        function generarPDF() {
+            // Verificar que el formulario esté completo
+            if (!validarFormulario()) return null;
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Configuración general
+            doc.setFont('helvetica');
+            const margin = 15;
+            let yPosition = margin;
+            
+            // Título
+            doc.setFontSize(18);
+            doc.setTextColor(255, 107, 0); // Naranja
+            doc.text('Reporte de Estadísticas Monetarias', 105, yPosition, { align: 'center' });
+            yPosition += 15;
+            
+            // Línea divisoria
+            doc.setDrawColor(255, 107, 0);
+            doc.line(margin, yPosition, 200 - margin, yPosition);
+            yPosition += 10;
+            
+            // Información general
+            doc.setFontSize(14);
+            doc.setTextColor(255, 107, 0);
+            doc.text('Información General', margin, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(224, 224, 224);
+            doc.text(`Fecha: ${document.getElementById('fecha').value}`, margin, yPosition);
+            yPosition += 7;
+            doc.text(`Responsable: ${document.getElementById('responsable').value}`, margin, yPosition);
+            yPosition += 7;
+            doc.text(`Departamento: ${document.getElementById('departamento').value}`, margin, yPosition);
+            yPosition += 15;
+            
+            // Datos monetarios
+            doc.setFontSize(14);
+            doc.setTextColor(255, 107, 0);
+            doc.text('Estadísticas Monetarias', margin, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(224, 224, 224);
+            
+            // Tabla de datos monetarios
+            const data = [
+                ['Concepto', 'Valor'],
+                ['Ingresos Totales', formatearMoneda(document.getElementById('ingresos').value, document.getElementById('moneda').value)],
+                ['Egresos Totales', formatearMoneda(document.getElementById('egresos').value, document.getElementById('moneda').value)],
+                ['Balance Final', formatearMoneda(document.getElementById('balance').value, document.getElementById('moneda').value)],
+                ['Moneda', document.getElementById('moneda').value]
+            ];
+            
+            doc.autoTable({
+                startY: yPosition,
+                head: [data[0]],
+                body: data.slice(1),
+                margin: { left: margin },
+                styles: { 
+                    cellPadding: 5,
+                    fontSize: 11,
+                    valign: 'middle',
+                    textColor: [224, 224, 224],
+                    fillColor: [30, 30, 30]
+                },
+                headStyles: {
+                    fillColor: [255, 107, 0],
+                    textColor: [30, 30, 30],
+                    fontStyle: 'bold'
+                },
+                alternateRowStyles: {
+                    fillColor: [40, 40, 40]
+                },
+                columnStyles: {
+                    0: { fontStyle: 'bold', cellWidth: 70 },
+                    1: { cellWidth: 'auto' }
+                }
+            });
+            
+            yPosition = doc.lastAutoTable.finalY + 10;
+            
+            // Detalles
+            const detalleIngresos = document.getElementById('detalle_ingresos').value;
+            const detalleEgresos = document.getElementById('detalle_egresos').value;
+            const observaciones = document.getElementById('observaciones').value;
+            
+            // Función para agregar texto con saltos de línea
+            const addWrappedText = (text, x, y, maxWidth, lineHeight) => {
+                const lines = doc.splitTextToSize(text, maxWidth);
+                doc.text(lines, x, y);
+                return lines.length * lineHeight;
+            };
+            
+            if (detalleIngresos) {
+                doc.setFontSize(12);
+                doc.setTextColor(255, 140, 66); // Naranja más claro
+                doc.text('Detalle de Ingresos:', margin, yPosition);
+                yPosition += 7;
+                
+                doc.setFontSize(11);
+                doc.setTextColor(224, 224, 224);
+                yPosition += addWrappedText(detalleIngresos, margin, yPosition, 180 - margin, 7);
+                yPosition += 10;
+            }
+            
+            if (detalleEgresos) {
+                doc.setFontSize(12);
+                doc.setTextColor(255, 140, 66);
+                doc.text('Detalle de Egresos:', margin, yPosition);
+                yPosition += 7;
+                
+                doc.setFontSize(11);
+                doc.setTextColor(224, 224, 224);
+                yPosition += addWrappedText(detalleEgresos, margin, yPosition, 180 - margin, 7);
+                yPosition += 10;
+            }
+            
+            if (observaciones) {
+                doc.setFontSize(12);
+                doc.setTextColor(255, 140, 66);
+                doc.text('Observaciones:', margin, yPosition);
+                yPosition += 7;
+                
+                doc.setFontSize(11);
+                doc.setTextColor(224, 224, 224);
+                addWrappedText(observaciones, margin, yPosition, 180 - margin, 7);
+            }
+            
+            // Pie de página
+            doc.setFontSize(10);
+            doc.setTextColor(150, 150, 150);
+            doc.text('Documento generado automáticamente - ' + new Date().toLocaleDateString(), 105, 285, { align: 'center' });
+            
+            // Generar el PDF como blob y como URL de datos
+            const nombreArchivo = `Estadisticas_Monetarias_${document.getElementById('fecha').value}_${document.getElementById('responsable').value.split(' ')[0]}.pdf`;
+            const pdfBlob = doc.output('blob');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            
+            return { blob: pdfBlob, nombre: nombreArchivo, url: pdfUrl };
+        }
+        
+        function formatearMoneda(valor, moneda) {
+            const simbolos = {
+                'MXN': '$',
+                'USD': 'US$',
+                'EUR': '€'
+            };
+            
+            const simbolo = simbolos[moneda] || '';
+            return `${simbolo}${parseFloat(valor).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+        }
+        
+        function validarFormulario() {
+            const camposRequeridos = ['fecha', 'responsable', 'departamento', 'ingresos', 'egresos', 'moneda'];
+            
+            for (const campo of camposRequeridos) {
+                if (!document.getElementById(campo).value) {
+                    alert(`Por favor complete el campo: ${campo.replace('_', ' ')}`);
+                    document.getElementById(campo).focus();
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        function enviarPorWhatsApp() {
+            // Generar el PDF primero
+            const pdfData = generarPDF();
+            if (!pdfData) return;
+            
+            // Generar el mensaje para WhatsApp
+            let mensaje = `*Reporte de Estadísticas Monetarias*%0A%0A`;
+            mensaje += `*Fecha:* ${document.getElementById('fecha').value}%0A`;
+            mensaje += `*Responsable:* ${document.getElementById('responsable').value}%0A`;
+            mensaje += `*Departamento:* ${document.getElementById('departamento').value}%0A%0A`;
+            
+            mensaje += `*Ingresos Totales:* ${formatearMoneda(document.getElementById('ingresos').value, document.getElementById('moneda').value)}%0A`;
+            mensaje += `*Egresos Totales:* ${formatearMoneda(document.getElementById('egresos').value, document.getElementById('moneda').value)}%0A`;
+            mensaje += `*Balance Final:* ${formatearMoneda(document.getElementById('balance').value, document.getElementById('moneda').value)}%0A%0A`;
+            
+            const detalleIngresos = document.getElementById('detalle_ingresos').value;
+            const detalleEgresos = document.getElementById('detalle_egresos').value;
+            const observaciones = document.getElementById('observaciones').value;
+            
+            if (detalleIngresos) {
+                mensaje += `*Detalle Ingresos:*%0A${detalleIngresos}%0A%0A`;
+            }
+            
+            if (detalleEgresos) {
+                mensaje += `*Detalle Egresos:*%0A${detalleEgresos}%0A%0A`;
+            }
+            
+            if (observaciones) {
+                mensaje += `*Observaciones:*%0A${observaciones}%0A%0A`;
+            }
+            
+            // Descargar el PDF automáticamente
+            const a = document.createElement('a');
+            a.href = pdfData.url;
+            a.download = pdfData.nombre;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Crear un enlace de descarga temporal (simulado)
+            // Nota: WhatsApp no permite adjuntar archivos directamente desde URL, pero podemos incluir el enlace
+            mensaje += `*Descarga el PDF completo aquí:*%0A${window.location.href.split('?')[0]}%0A%0A`;
+            mensaje += `(Descarga el archivo y ábrelo para ver el reporte completo)`;
+            
+            // Abrir WhatsApp con el mensaje preparado
+            const telefono = '4622002744'; // Cambia este número si es necesario
+            const urlWhatsApp = `https://wa.me/${telefono}?text=${mensaje}`;
+            
+            // Abrir WhatsApp después de un breve retraso para permitir la descarga
+            setTimeout(() => {
+                window.open(urlWhatsApp, '_blank');
+            }, 500);
+        }
+    </script>
+</body>
+</html>

@@ -464,6 +464,82 @@
             box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
         }
 
+        /* Estilos para el modal de acceso */
+        .access-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .access-container {
+            background-color: var(--secondary-color);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+            border: 1px solid var(--primary-color);
+        }
+
+        .access-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .access-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border: 2px solid var(--medium-gray);
+            border-radius: 5px;
+            background-color: var(--secondary-light);
+            color: var(--text-color);
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .access-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .access-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .access-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 0, 0.3);
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
         /* Estilos responsivos */
         @media (max-width: 768px) {
             .container {
@@ -512,6 +588,10 @@
                 font-size: 20px;
                 bottom: 15px;
                 right: 15px;
+            }
+            
+            .access-container {
+                padding: 20px;
             }
         }
 
@@ -564,6 +644,20 @@
                 bottom: 10px;
                 right: 10px;
             }
+            
+            .access-container {
+                padding: 15px;
+            }
+            
+            .access-input {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .access-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
     <!-- Incluir la biblioteca jsPDF -->
@@ -571,205 +665,251 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-    <!-- Botón flotante para ir a index.html -->
-    <a href="menu.html" class="floating-btn">🔙</a>
+    <!-- Modal de acceso -->
+    <div id="accessModal" class="access-modal">
+        <div class="access-container">
+            <h2>Acceso Restringido</h2>
+            <p>Por favor, introduce el código de acceso para continuar:</p>
+            <input type="password" id="accessCode" class="access-input" placeholder="Ingresa el código">
+            <p id="errorMessage" class="error-message">Código incorrecto. Intenta nuevamente.</p>
+            <button class="access-btn" onclick="checkAccess()">Acceder</button>
+        </div>
+    </div>
     
-    <div class="container">
-        <h1>Analizador de Calidad de Audio y Letra</h1>
+    <!-- Contenido principal (oculto inicialmente) -->
+    <div id="mainContent" style="display: none;">
+        <!-- Botón flotante para ir a index.html -->
+        <a href="menu.html" class="floating-btn">🔙</a>
         
-        <div class="upload-section">
-            <p>Sube tu archivo de audio para analizar su calidad, letra y potencial comercial</p>
-            <input type="file" id="fileInput" accept="audio/*">
-            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Seleccionar Archivo</button>
-            <p id="fileName" class="file-info">No se ha seleccionado ningún archivo</p>
-            <p id="fileHash" class="hash-info"></p>
-        </div>
-        
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Analizando audio y letra...</p>
+        <div class="container">
+            <h1>Analizador de Calidad de Audio y Letra</h1>
             
-            <!-- Barra de progreso y contador -->
-            <div class="progress-container">
-                <div class="progress-header">
-                    <span class="progress-title">Progreso del análisis</span>
-                    <span id="progressPercentage" class="progress-percentage">0%</span>
-                </div>
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill"></div>
-                </div>
-                <div class="progress-steps">
-                    <div class="progress-step" id="step1">
-                        <div class="progress-step-circle">1</div>
-                        <div>Subiendo archivo</div>
+            <div class="upload-section">
+                <p>Sube tu archivo de audio para analizar su calidad, letra y potencial comercial</p>
+                <input type="file" id="fileInput" accept="audio/*">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Seleccionar Archivo</button>
+                <p id="fileName" class="file-info">No se ha seleccionado ningún archivo</p>
+                <p id="fileHash" class="hash-info"></p>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analizando audio y letra...</p>
+                
+                <!-- Barra de progreso y contador -->
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span class="progress-title">Progreso del análisis</span>
+                        <span id="progressPercentage" class="progress-percentage">0%</span>
                     </div>
-                    <div class="progress-step" id="step2">
-                        <div class="progress-step-circle">2</div>
-                        <div>Analizando audio</div>
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
                     </div>
-                    <div class="progress-step" id="step3">
-                        <div class="progress-step-circle">3</div>
-                        <div>Extrayendo letra</div>
-                    </div>
-                    <div class="progress-step" id="step4">
-                        <div class="progress-step-circle">4</div>
-                        <div>Verificando copyright</div>
-                    </div>
-                    <div class="progress-step" id="step5">
-                        <div class="progress-step-circle">5</div>
-                        <div>Generando reporte</div>
+                    <div class="progress-steps">
+                        <div class="progress-step" id="step1">
+                            <div class="progress-step-circle">1</div>
+                            <div>Subiendo archivo</div>
+                        </div>
+                        <div class="progress-step" id="step2">
+                            <div class="progress-step-circle">2</div>
+                            <div>Analizando audio</div>
+                        </div>
+                        <div class="progress-step" id="step3">
+                            <div class="progress-step-circle">3</div>
+                            <div>Extrayendo letra</div>
+                        </div>
+                        <div class="progress-step" id="step4">
+                            <div class="progress-step-circle">4</div>
+                            <div>Verificando copyright</div>
+                        </div>
+                        <div class="progress-step" id="step5">
+                            <div class="progress-step-circle">5</div>
+                            <div>Generando reporte</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="result-section" id="resultSection">
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('audio')">Calidad de Audio</div>
-                <div class="tab" onclick="switchTab('lyrics')">Análisis de Letra</div>
-                <div class="tab" onclick="switchTab('profit')">Potencial de Ganancias</div>
-                <div class="tab" onclick="switchTab('copyright')">Detección de Copyright</div>
-            </div>
             
-            <div id="audioTab" class="tab-content active">
-                <h2>Resultados del Análisis de Audio</h2>
-                
-                <div class="result-item">
-                    <span class="result-label">Formato del archivo:</span>
-                    <span id="formatResult">-</span>
+            <div class="result-section" id="resultSection">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('audio')">Calidad de Audio</div>
+                    <div class="tab" onclick="switchTab('lyrics')">Análisis de Letra</div>
+                    <div class="tab" onclick="switchTab('profit')">Potencial de Ganancias</div>
+                    <div class="tab" onclick="switchTab('copyright')">Detección de Copyright</div>
                 </div>
                 
-                <div class="result-item">
-                    <span class="result-label">Tasa de bits:</span>
-                    <span id="bitrateResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Frecuencia de muestreo:</span>
-                    <span id="sampleRateResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Canales:</span>
-                    <span id="channelsResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Duración:</span>
-                    <span id="durationResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Nivel de calidad:</span>
-                    <span id="qualityResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Precio recomendado:</span>
-                    <div id="priceResult" class="price">-</div>
-                </div>
-            </div>
-            
-            <div id="lyricsTab" class="tab-content">
-                <h2>Análisis de Letra</h2>
-                
-                <div class="result-item">
-                    <span class="result-label">Calidad de la letra:</span>
-                    <span id="lyricsQuality" class="lyrics-quality">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Estructura:</span>
-                    <span id="structureResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Rima y métrica:</span>
-                    <span id="rhymeResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Originalidad:</span>
-                    <span id="originalityResult">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Tema emocional:</span>
-                    <span id="emotionalResult">-</span>
-                </div>
-                
-                <div class="lyrics-section">
-                    <h3>Recomendaciones para la letra:</h3>
-                    <ul id="lyricsRecommendations">
-                        <!-- Las recomendaciones se agregarán aquí -->
-                    </ul>
-                </div>
-            </div>
-            
-            <div id="profitTab" class="tab-content">
-                <h2>Potencial de Ganancias</h2>
-                
-                <div class="result-item">
-                    <span class="result-label">Potencial viral:</span>
-                    <span id="viralPotential">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Mercado objetivo:</span>
-                    <span id="targetMarket">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Potencial en plataformas:</span>
-                    <div id="platformPotential">
-                        <!-- Los resultados por plataforma se agregarán aquí -->
+                <div id="audioTab" class="tab-content active">
+                    <h2>Resultados del Análisis de Audio</h2>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Formato del archivo:</span>
+                        <span id="formatResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Tasa de bits:</span>
+                        <span id="bitrateResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Frecuencia de muestreo:</span>
+                        <span id="sampleRateResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Canales:</span>
+                        <span id="channelsResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Duración:</span>
+                        <span id="durationResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Nivel de calidad:</span>
+                        <span id="qualityResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Precio recomendado:</span>
+                        <div id="priceResult" class="price">-</div>
                     </div>
                 </div>
                 
-                <div class="profit-potential">
-                    <div class="result-label">Potencial de ganancias estimado:</div>
-                    <div id="profitEstimate" class="price">-</div>
-                    <div class="profit-meter">
-                        <div id="profitMeterFill" class="meter-fill"></div>
+                <div id="lyricsTab" class="tab-content">
+                    <h2>Análisis de Letra</h2>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Calidad de la letra:</span>
+                        <span id="lyricsQuality" class="lyrics-quality">-</span>
                     </div>
-                    <p id="profitDescription">-</p>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Estructura:</span>
+                        <span id="structureResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Rima y métrica:</span>
+                        <span id="rhymeResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Originalidad:</span>
+                        <span id="originalityResult">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Tema emocional:</span>
+                        <span id="emotionalResult">-</span>
+                    </div>
+                    
+                    <div class="lyrics-section">
+                        <h3>Recomendaciones para la letra:</h3>
+                        <ul id="lyricsRecommendations">
+                            <!-- Las recomendaciones se agregarán aquí -->
+                        </ul>
+                    </div>
                 </div>
+                
+                <div id="profitTab" class="tab-content">
+                    <h2>Potencial de Ganancias</h2>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Potencial viral:</span>
+                        <span id="viralPotential">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Mercado objetivo:</span>
+                        <span id="targetMarket">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Potencial en plataformas:</span>
+                        <div id="platformPotential">
+                            <!-- Los resultados por plataforma se agregarán aquí -->
+                        </div>
+                    </div>
+                    
+                    <div class="profit-potential">
+                        <div class="result-label">Potencial de ganancias estimado:</div>
+                        <div id="profitEstimate" class="price">-</div>
+                        <div class="profit-meter">
+                            <div id="profitMeterFill" class="meter-fill"></div>
+                        </div>
+                        <p id="profitDescription">-</p>
+                    </div>
+                </div>
+                
+                <div id="copyrightTab" class="tab-content">
+                    <h2>Detección de Copyright</h2>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Estado de copyright:</span>
+                        <div id="copyrightStatus" class="copyright">-</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Similitud con contenido protegido:</span>
+                        <span id="copyrightSimilarity">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Posibles coincidencias:</span>
+                        <span id="copyrightMatches">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Recomendaciones:</span>
+                        <ul id="copyrightRecommendations">
+                            <!-- Recomendaciones sobre copyright -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Botón para descargar PDF -->
+                <button id="downloadPdfBtn" class="download-pdf-btn" onclick="generatePDF()">
+                    Descargar Reporte en PDF
+                </button>
             </div>
-            
-            <div id="copyrightTab" class="tab-content">
-                <h2>Detección de Copyright</h2>
-                
-                <div class="result-item">
-                    <span class="result-label">Estado de copyright:</span>
-                    <div id="copyrightStatus" class="copyright">-</div>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Similitud con contenido protegido:</span>
-                    <span id="copyrightSimilarity">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Posibles coincidencias:</span>
-                    <span id="copyrightMatches">-</span>
-                </div>
-                
-                <div class="result-item">
-                    <span class="result-label">Recomendaciones:</span>
-                    <ul id="copyrightRecommendations">
-                        <!-- Recomendaciones sobre copyright -->
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Botón para descargar PDF -->
-            <button id="downloadPdfBtn" class="download-pdf-btn" onclick="generatePDF()">
-                Descargar Reporte en PDF
-            </button>
         </div>
     </div>
 
     <script>
+        // Código de acceso válido
+        const ACCESS_CODE = "2029";
+        
+        // Función para verificar el acceso
+        function checkAccess() {
+            const inputCode = document.getElementById('accessCode').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (inputCode === ACCESS_CODE) {
+                // Código correcto, mostrar contenido
+                document.getElementById('accessModal').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            } else {
+                // Código incorrecto, mostrar error
+                errorMessage.style.display = 'block';
+                document.getElementById('accessCode').value = '';
+                document.getElementById('accessCode').focus();
+            }
+        }
+        
+        // Permitir enviar con Enter
+        document.getElementById('accessCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAccess();
+            }
+        });
+        
+        // Enfocar el input al cargar la página
+        window.onload = function() {
+            document.getElementById('accessCode').focus();
+        };
+
         // Objeto para almacenar análisis previos
         const analysisCache = {};
         

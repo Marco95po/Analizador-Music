@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Estadísticas Monetarias</title>
+    <title>Registro de Ingresos Artísticos</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
@@ -143,13 +143,6 @@
             background-size: 16px;
         }
         
-        /* Estilo para el balance (readonly) */
-        input[readonly] {
-            background-color: #2A2A2A;
-            color: var(--color-accent);
-            font-weight: bold;
-        }
-        
         /* Efecto de hover en las secciones */
         .section:hover {
             transform: translateY(-3px);
@@ -217,14 +210,19 @@
     
     <!-- Contenido principal (oculto inicialmente) -->
     <div id="mainContent">
-        <h1>Registro de Estadísticas Monetarias</h1>
+        <h1>Registro de Ingresos Artísticos</h1>
         
-        <form id="estadisticasForm">
+        <form id="ingresosForm">
             <div class="section">
                 <h2 class="section-title">Información General</h2>
                 <div class="form-group">
-                    <label for="fecha">Fecha del Reporte:</label>
+                    <label for="fecha">Fecha de Ingreso:</label>
                     <input type="date" id="fecha" name="fecha" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="departamento">Departamento/Área:</label>
+                    <input type="text" id="departamento" name="departamento" required placeholder="Ej: Música, Pintura, Teatro, etc.">
                 </div>
                 
                 <div class="form-group">
@@ -233,26 +231,16 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="departamento">Departamento/Área:</label>
-                    <input type="text" id="departamento" name="departamento" required placeholder="Ej: Finanzas, Ventas, etc.">
+                    <label for="artista">Artista:</label>
+                    <input type="text" id="artista" name="artista" required placeholder="Nombre del artista o grupo">
                 </div>
             </div>
             
             <div class="section">
-                <h2 class="section-title">Estadísticas Monetarias</h2>
+                <h2 class="section-title">Datos Monetarios</h2>
                 <div class="form-group">
-                    <label for="ingresos">Ingresos Totales:</label>
-                    <input type="number" id="ingresos" name="ingresos" step="0.01" min="0" required placeholder="0.00">
-                </div>
-                
-                <div class="form-group">
-                    <label for="egresos">Egresos Totales:</label>
-                    <input type="number" id="egresos" name="egresos" step="0.01" min="0" required placeholder="0.00">
-                </div>
-                
-                <div class="form-group">
-                    <label for="balance">Balance Final:</label>
-                    <input type="number" id="balance" name="balance" step="0.01" required placeholder="0.00" readonly>
+                    <label for="ingreso">Ingreso Monetario:</label>
+                    <input type="number" id="ingreso" name="ingreso" step="0.01" min="0" required placeholder="0.00">
                 </div>
                 
                 <div class="form-group">
@@ -267,25 +255,12 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="detalle_egresos">Detalle de Egresos (opcional):</label>
-                    <textarea id="detalle_egresos" name="detalle_egresos" rows="3" placeholder="Desglose de los principales egresos"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="detalle_ingresos">Detalle de Ingresos (opcional):</label>
-                    <textarea id="detalle_ingresos" name="detalle_ingresos" rows="3" placeholder="Desglose de los principales ingresos"></textarea>
+                    <label for="detalle_ingreso">Detalle del Ingreso:</label>
+                    <textarea id="detalle_ingreso" name="detalle_ingreso" rows="3" required placeholder="Descripción detallada del ingreso (ej: venta de obra, presentación, etc.)"></textarea>
                 </div>
             </div>
             
-            <div class="section">
-                <h2 class="section-title">Observaciones</h2>
-                <div class="form-group">
-                    <label for="observaciones">Notas Adicionales:</label>
-                    <textarea id="observaciones" name="observaciones" rows="4" placeholder="Cualquier observación relevante sobre las estadísticas"></textarea>
-                </div>
-            </div>
-            
-            <button type="button" class="btn" onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button>
+            <button type="button" class="btn" onclick="enviarPorWhatsApp()">Descargar PDF</button>
         </form>
     </div>
 
@@ -322,17 +297,6 @@
             }
         });
 
-        // Calcular balance automáticamente
-        document.getElementById('ingresos').addEventListener('input', calcularBalance);
-        document.getElementById('egresos').addEventListener('input', calcularBalance);
-        
-        function calcularBalance() {
-            const ingresos = parseFloat(document.getElementById('ingresos').value) || 0;
-            const egresos = parseFloat(document.getElementById('egresos').value) || 0;
-            const balance = ingresos - egresos;
-            document.getElementById('balance').value = balance.toFixed(2);
-        }
-        
         function generarPDF() {
             // Verificar que el formulario esté completo
             if (!validarFormulario()) return null;
@@ -348,7 +312,7 @@
             // Título
             doc.setFontSize(18);
             doc.setTextColor(255, 107, 0); // Naranja
-            doc.text('Reporte de Estadísticas Monetarias', 105, yPosition, { align: 'center' });
+            doc.text('Registro de Ingreso Artístico', 105, yPosition, { align: 'center' });
             yPosition += 15;
             
             // Línea divisoria
@@ -366,15 +330,17 @@
             doc.setTextColor(224, 224, 224);
             doc.text(`Fecha: ${document.getElementById('fecha').value}`, margin, yPosition);
             yPosition += 7;
+            doc.text(`Departamento: ${document.getElementById('departamento').value}`, margin, yPosition);
+            yPosition += 7;
             doc.text(`Responsable: ${document.getElementById('responsable').value}`, margin, yPosition);
             yPosition += 7;
-            doc.text(`Departamento: ${document.getElementById('departamento').value}`, margin, yPosition);
+            doc.text(`Artista: ${document.getElementById('artista').value}`, margin, yPosition);
             yPosition += 15;
             
             // Datos monetarios
             doc.setFontSize(14);
             doc.setTextColor(255, 107, 0);
-            doc.text('Estadísticas Monetarias', margin, yPosition);
+            doc.text('Datos Monetarios', margin, yPosition);
             yPosition += 10;
             
             doc.setFontSize(12);
@@ -383,9 +349,7 @@
             // Tabla de datos monetarios
             const data = [
                 ['Concepto', 'Valor'],
-                ['Ingresos Totales', formatearMoneda(document.getElementById('ingresos').value, document.getElementById('moneda').value)],
-                ['Egresos Totales', formatearMoneda(document.getElementById('egresos').value, document.getElementById('moneda').value)],
-                ['Balance Final', formatearMoneda(document.getElementById('balance').value, document.getElementById('moneda').value)],
+                ['Ingreso Monetario', formatearMoneda(document.getElementById('ingreso').value, document.getElementById('moneda').value)],
                 ['Moneda', document.getElementById('moneda').value]
             ];
             
@@ -418,9 +382,7 @@
             yPosition = doc.lastAutoTable.finalY + 10;
             
             // Detalles
-            const detalleIngresos = document.getElementById('detalle_ingresos').value;
-            const detalleEgresos = document.getElementById('detalle_egresos').value;
-            const observaciones = document.getElementById('observaciones').value;
+            const detalleIngreso = document.getElementById('detalle_ingreso').value;
             
             // Función para agregar texto con saltos de línea
             const addWrappedText = (text, x, y, maxWidth, lineHeight) => {
@@ -429,39 +391,16 @@
                 return lines.length * lineHeight;
             };
             
-            if (detalleIngresos) {
+            if (detalleIngreso) {
                 doc.setFontSize(12);
                 doc.setTextColor(255, 140, 66); // Naranja más claro
-                doc.text('Detalle de Ingresos:', margin, yPosition);
+                doc.text('Detalle del Ingreso:', margin, yPosition);
                 yPosition += 7;
                 
                 doc.setFontSize(11);
                 doc.setTextColor(224, 224, 224);
-                yPosition += addWrappedText(detalleIngresos, margin, yPosition, 180 - margin, 7);
+                yPosition += addWrappedText(detalleIngreso, margin, yPosition, 180 - margin, 7);
                 yPosition += 10;
-            }
-            
-            if (detalleEgresos) {
-                doc.setFontSize(12);
-                doc.setTextColor(255, 140, 66);
-                doc.text('Detalle de Egresos:', margin, yPosition);
-                yPosition += 7;
-                
-                doc.setFontSize(11);
-                doc.setTextColor(224, 224, 224);
-                yPosition += addWrappedText(detalleEgresos, margin, yPosition, 180 - margin, 7);
-                yPosition += 10;
-            }
-            
-            if (observaciones) {
-                doc.setFontSize(12);
-                doc.setTextColor(255, 140, 66);
-                doc.text('Observaciones:', margin, yPosition);
-                yPosition += 7;
-                
-                doc.setFontSize(11);
-                doc.setTextColor(224, 224, 224);
-                addWrappedText(observaciones, margin, yPosition, 180 - margin, 7);
             }
             
             // Pie de página
@@ -470,7 +409,7 @@
             doc.text('Documento generado automáticamente - ' + new Date().toLocaleDateString(), 105, 285, { align: 'center' });
             
             // Generar el PDF como blob y como URL de datos
-            const nombreArchivo = `Estadisticas_Monetarias_${document.getElementById('fecha').value}_${document.getElementById('responsable').value.split(' ')[0]}.pdf`;
+            const nombreArchivo = `Ingreso_Artistico_${document.getElementById('fecha').value}_${document.getElementById('artista').value.split(' ')[0]}.pdf`;
             const pdfBlob = doc.output('blob');
             const pdfUrl = URL.createObjectURL(pdfBlob);
             
@@ -489,7 +428,7 @@
         }
         
         function validarFormulario() {
-            const camposRequeridos = ['fecha', 'responsable', 'departamento', 'ingresos', 'egresos', 'moneda'];
+            const camposRequeridos = ['fecha', 'departamento', 'responsable', 'artista', 'ingreso', 'moneda', 'detalle_ingreso'];
             
             for (const campo of camposRequeridos) {
                 if (!document.getElementById(campo).value) {
@@ -508,29 +447,19 @@
             if (!pdfData) return;
             
             // Generar el mensaje para WhatsApp
-            let mensaje = `*Reporte de Estadísticas Monetarias*%0A%0A`;
+            let mensaje = `*Registro de Ingreso Artístico*%0A%0A`;
             mensaje += `*Fecha:* ${document.getElementById('fecha').value}%0A`;
+            mensaje += `*Departamento:* ${document.getElementById('departamento').value}%0A`;
             mensaje += `*Responsable:* ${document.getElementById('responsable').value}%0A`;
-            mensaje += `*Departamento:* ${document.getElementById('departamento').value}%0A%0A`;
+            mensaje += `*Artista:* ${document.getElementById('artista').value}%0A%0A`;
             
-            mensaje += `*Ingresos Totales:* ${formatearMoneda(document.getElementById('ingresos').value, document.getElementById('moneda').value)}%0A`;
-            mensaje += `*Egresos Totales:* ${formatearMoneda(document.getElementById('egresos').value, document.getElementById('moneda').value)}%0A`;
-            mensaje += `*Balance Final:* ${formatearMoneda(document.getElementById('balance').value, document.getElementById('moneda').value)}%0A%0A`;
+            mensaje += `*Ingreso Monetario:* ${formatearMoneda(document.getElementById('ingreso').value, document.getElementById('moneda').value)}%0A`;
+            mensaje += `*Moneda:* ${document.getElementById('moneda').value}%0A%0A`;
             
-            const detalleIngresos = document.getElementById('detalle_ingresos').value;
-            const detalleEgresos = document.getElementById('detalle_egresos').value;
-            const observaciones = document.getElementById('observaciones').value;
+            const detalleIngreso = document.getElementById('detalle_ingreso').value;
             
-            if (detalleIngresos) {
-                mensaje += `*Detalle Ingresos:*%0A${detalleIngresos}%0A%0A`;
-            }
-            
-            if (detalleEgresos) {
-                mensaje += `*Detalle Egresos:*%0A${detalleEgresos}%0A%0A`;
-            }
-            
-            if (observaciones) {
-                mensaje += `*Observaciones:*%0A${observaciones}%0A%0A`;
+            if (detalleIngreso) {
+                mensaje += `*Detalle del Ingreso:*%0A${detalleIngreso}%0A%0A`;
             }
             
             // Descargar el PDF automáticamente
@@ -541,19 +470,8 @@
             a.click();
             document.body.removeChild(a);
             
-            // Crear un enlace de descarga temporal (simulado)
-            // Nota: WhatsApp no permite adjuntar archivos directamente desde URL, pero podemos incluir el enlace
-            mensaje += `*Descarga el PDF completo aquí:*%0A${window.location.href.split('?')[0]}%0A%0A`;
-            mensaje += `(Descarga el archivo y ábrelo para ver el reporte completo)`;
-            
             // Abrir WhatsApp con el mensaje preparado
-            const telefono = '524622002744'; // Cambia este número si es necesario
-            const urlWhatsApp = `https://wa.me/${telefono}?text=${mensaje}`;
-            
-            // Abrir WhatsApp después de un breve retraso para permitir la descarga
-            setTimeout(() => {
-                window.open(urlWhatsApp, '_blank');
-            }, 500);
+            alert("El PDF se ha generado correctamente. Por favor comparte el archivo descargado a través de WhatsApp manualmente.");
         }
     </script>
 </body>

@@ -15,6 +15,7 @@
             --color-bg: #121212; /* Fondo oscuro */
             --color-card: #1E1E1E; /* Tarjetas más claras */
             --color-border: #333333; /* Bordes */
+            --color-error: #FF3333; /* Rojo para errores */
         }
         
         body {
@@ -49,6 +50,7 @@
         input[type="text"],
         input[type="number"],
         input[type="date"],
+        input[type="password"],
         select,
         textarea {
             width: 100%;
@@ -65,6 +67,7 @@
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus,
+        input[type="password"]:focus,
         select:focus,
         textarea:focus {
             outline: none;
@@ -154,6 +157,35 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         
+        /* Pantalla de autenticación */
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: var(--color-card);
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border-top: 5px solid var(--color-primary);
+        }
+        
+        .auth-title {
+            color: var(--color-primary);
+            margin-bottom: 25px;
+        }
+        
+        .error-message {
+            color: var(--color-error);
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        /* Contenido principal (oculto inicialmente) */
+        #mainContent {
+            display: none;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             body {
@@ -163,82 +195,133 @@
             .section {
                 padding: 15px;
             }
+            
+            .auth-container {
+                margin: 20px auto;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Registro de Estadísticas Monetarias</h1>
+    <!-- Pantalla de autenticación -->
+    <div id="authScreen" class="auth-container">
+        <h2 class="auth-title">Acceso Restringido</h2>
+        <div class="form-group">
+            <label for="codigoAcceso">Ingrese el código de acceso:</label>
+            <input type="password" id="codigoAcceso" name="codigoAcceso" required placeholder="Código de 4 dígitos">
+        </div>
+        <button type="button" class="btn" onclick="verificarAcceso()">Ingresar</button>
+        <div id="errorAuth" class="error-message">Código incorrecto. Intente nuevamente.</div>
+    </div>
     
-    <form id="estadisticasForm">
-        <div class="section">
-            <h2 class="section-title">Información General</h2>
-            <div class="form-group">
-                <label for="fecha">Fecha del Reporte:</label>
-                <input type="date" id="fecha" name="fecha" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="responsable">Responsable:</label>
-                <input type="text" id="responsable" name="responsable" required placeholder="Nombre completo del responsable">
-            </div>
-            
-            <div class="form-group">
-                <label for="departamento">Departamento/Área:</label>
-                <input type="text" id="departamento" name="departamento" required placeholder="Ej: Finanzas, Ventas, etc.">
-            </div>
-        </div>
+    <!-- Contenido principal (oculto inicialmente) -->
+    <div id="mainContent">
+        <h1>Registro de Estadísticas Monetarias</h1>
         
-        <div class="section">
-            <h2 class="section-title">Estadísticas Monetarias</h2>
-            <div class="form-group">
-                <label for="ingresos">Ingresos Totales:</label>
-                <input type="number" id="ingresos" name="ingresos" step="0.01" min="0" required placeholder="0.00">
+        <form id="estadisticasForm">
+            <div class="section">
+                <h2 class="section-title">Información General</h2>
+                <div class="form-group">
+                    <label for="fecha">Fecha del Reporte:</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="responsable">Responsable:</label>
+                    <input type="text" id="responsable" name="responsable" required placeholder="Nombre completo del responsable">
+                </div>
+                
+                <div class="form-group">
+                    <label for="departamento">Departamento/Área:</label>
+                    <input type="text" id="departamento" name="departamento" required placeholder="Ej: Finanzas, Ventas, etc.">
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="egresos">Egresos Totales:</label>
-                <input type="number" id="egresos" name="egresos" step="0.01" min="0" required placeholder="0.00">
+            <div class="section">
+                <h2 class="section-title">Estadísticas Monetarias</h2>
+                <div class="form-group">
+                    <label for="ingresos">Ingresos Totales:</label>
+                    <input type="number" id="ingresos" name="ingresos" step="0.01" min="0" required placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="egresos">Egresos Totales:</label>
+                    <input type="number" id="egresos" name="egresos" step="0.01" min="0" required placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="balance">Balance Final:</label>
+                    <input type="number" id="balance" name="balance" step="0.01" required placeholder="0.00" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="moneda">Moneda:</label>
+                    <select id="moneda" name="moneda" required>
+                        <option value="">Seleccione una moneda</option>
+                        <option value="MXN">Peso Mexicano (MXN)</option>
+                        <option value="USD">Dólar Estadounidense (USD)</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="otra">Otra</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="detalle_egresos">Detalle de Egresos (opcional):</label>
+                    <textarea id="detalle_egresos" name="detalle_egresos" rows="3" placeholder="Desglose de los principales egresos"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="detalle_ingresos">Detalle de Ingresos (opcional):</label>
+                    <textarea id="detalle_ingresos" name="detalle_ingresos" rows="3" placeholder="Desglose de los principales ingresos"></textarea>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="balance">Balance Final:</label>
-                <input type="number" id="balance" name="balance" step="0.01" required placeholder="0.00" readonly>
+            <div class="section">
+                <h2 class="section-title">Observaciones</h2>
+                <div class="form-group">
+                    <label for="observaciones">Notas Adicionales:</label>
+                    <textarea id="observaciones" name="observaciones" rows="4" placeholder="Cualquier observación relevante sobre las estadísticas"></textarea>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="moneda">Moneda:</label>
-                <select id="moneda" name="moneda" required>
-                    <option value="">Seleccione una moneda</option>
-                    <option value="MXN">Peso Mexicano (MXN)</option>
-                    <option value="USD">Dólar Estadounidense (USD)</option>
-                    <option value="EUR">Euro (EUR)</option>
-                    <option value="otra">Otra</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="detalle_egresos">Detalle de Egresos (opcional):</label>
-                <textarea id="detalle_egresos" name="detalle_egresos" rows="3" placeholder="Desglose de los principales egresos"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="detalle_ingresos">Detalle de Ingresos (opcional):</label>
-                <textarea id="detalle_ingresos" name="detalle_ingresos" rows="3" placeholder="Desglose de los principales ingresos"></textarea>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2 class="section-title">Observaciones</h2>
-            <div class="form-group">
-                <label for="observaciones">Notas Adicionales:</label>
-                <textarea id="observaciones" name="observaciones" rows="4" placeholder="Cualquier observación relevante sobre las estadísticas"></textarea>
-            </div>
-        </div>
-        
-        <button type="button" class="btn" onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button>
-    </form>
+            <button type="button" class="btn" onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button>
+        </form>
+    </div>
 
     <script>
+        // Código de acceso válido
+        const CODIGO_ACCESO_VALIDO = "2029";
+        
+        // Verificar el código de acceso
+        function verificarAcceso() {
+            const codigoIngresado = document.getElementById('codigoAcceso').value;
+            const errorElement = document.getElementById('errorAuth');
+            
+            if (codigoIngresado === CODIGO_ACCESO_VALIDO) {
+                // Código correcto, mostrar contenido principal
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                
+                // Establecer la fecha actual como valor predeterminado
+                const hoy = new Date();
+                const fechaFormateada = hoy.toISOString().split('T')[0];
+                document.getElementById('fecha').value = fechaFormateada;
+            } else {
+                // Código incorrecto, mostrar error
+                errorElement.style.display = 'block';
+                document.getElementById('codigoAcceso').focus();
+                document.getElementById('codigoAcceso').select();
+            }
+        }
+        
+        // Permitir enviar el formulario con Enter en el campo de código
+        document.getElementById('codigoAcceso').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verificarAcceso();
+            }
+        });
+
         // Calcular balance automáticamente
         document.getElementById('ingresos').addEventListener('input', calcularBalance);
         document.getElementById('egresos').addEventListener('input', calcularBalance);

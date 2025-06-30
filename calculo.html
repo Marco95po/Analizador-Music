@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora AristaMusic para Artistas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #FF7A00; /* Naranja principal */
+            --primary-light: #FF9E40;
+            --primary-dark: #E06C00;
+            --dark: #121212; /* Negro oscuro */
+            --darker: #0A0A0A; /* Negro más oscuro */
+            --light: #FFFFFF;
+            --gray: #1E1E1E; /* Gris oscuro */
+            --text-dark: #E0E0E0; /* Texto claro */
+            --text-light: #A0A0A0; /* Texto gris */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            background-color: var(--darker);
+            color: var(--light);
+            padding: 1.5rem 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        h1 span {
+            color: var(--primary);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            color: var(--text-light);
+        }
+        
+        .calculator {
+            background-color: var(--gray);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            border: 1px solid var(--primary-dark);
+        }
+        
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--darker);
+            color: var(--text-dark);
+            border: 2px solid #333;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.3);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        button:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 122, 0, 0.4);
+        }
+        
+        .results {
+            background-color: var(--darker);
+            color: var(--light);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+        
+        .results h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--primary);
+        }
+        
+        .info-section {
+            margin-top: 3rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .info-card {
+            background-color: var(--gray);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid #333;
+        }
+        
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-card h3 svg {
+            margin-right: 0.5rem;
+        }
+        
+        .info-card ul {
+            list-style-position: inside;
+            margin-left: 0.5rem;
+        }
+        
+        .info-card li {
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+        }
+        
+        .examples {
+            margin-top: 2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: var(--gray);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid #333;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        
+        th {
+            background-color: var(--darker);
+            color: var(--primary);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 122, 0, 0.1);
+        }
+        
+        .highlight {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            background-color: var(--darker);
+            border-radius: 15px;
+        }
+        
+        /* Estilos para el modal de código de acceso */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: var(--darker);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 3px solid var(--primary);
+        }
+        
+        .modal-content h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-content p {
+            margin-bottom: 1.5rem;
+        }
+        
+        #access-code {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 0.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .error-message {
+            color: #ff4444;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de código de acceso -->
+    <div class="modal-overlay" id="access-modal">
+        <div class="modal-content">
+            <h2>Acceso a la Calculadora Premium</h2>
+            <p>Por favor ingresa el código de acceso proporcionado por AristaMusic para continuar:</p>
+            <input type="password" id="access-code" placeholder="Ingresa el código de 4 dígitos" maxlength="4">
+            <p class="error-message" id="error-message">Código incorrecto. Intenta nuevamente.</p>
+            <button id="verify-code">Verificar Código</button>
+        </div>
+    </div>
+    
+    <header>
+        <div class="container">
+            <h1>Calculadora de <span>Ingresos</span> AristaMusic</h1>
+            <p class="subtitle">Estima cuánto puedes ganar por tus streams en Music Live</p>
+        </div>
+    </header>
+    
+    <div class="container" id="main-content" style="display: none;">
+        <div class="calculator">
+            <div class="calculator-grid">
+                <div>
+                    <div class="input-group">
+                        <label for="streams">Número de Streams</label>
+                        <input type="number" id="streams" placeholder="Ejemplo: 10000" min="0">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="country">País predominante de tus oyentes</label>
+                        <select id="country">
+                            <option value="global">Global (promedio)</option>
+                            <option value="usa">Estados Unidos</option>
+                            <option value="europe">Europa</option>
+                            <option value="latam">Latinoamérica</option>
+                            <option value="mexico">México</option>
+                            <option value="asia">Asia</option>
+                            <option value="other">Otros</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="input-group">
+                        <label for="account-type">Tipo de cuenta predominante</label>
+                        <select id="account-type">
+                            <option value="free">Free</option>
+                            <option value="premium">Vendió su Canción (Premium)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="distribution">Distribuidor/Disquera</label>
+                        <select id="distribution">
+                            <option value="independent">Artista independiente (100%)</option>
+                            <option value="label70">Disquera (70% para ti)</option>
+                            <option value="label50">Disquera (50% para ti)</option>
+                            <option value="label30">Disquera (30% para ti)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="calculate">Calcular Ingresos</button>
+            
+            <div class="results" id="results" style="display: none;">
+                <h2>Tu Ingreso Estimado</h2>
+                <div class="result-value" id="low-range">$0.00 MXN</div>
+                <button id="download-pdf" style="margin-top: 2rem;">
+                    Descargar Reporte en PDF
+                </button>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2>¿Cómo se calculan estos valores?</h2>
+            <p>Spotify no paga una tarifa fija por stream, sino que distribuye los ingresos en función de la participación de mercado de cada artista. Estas estimaciones se basan en datos promedio reportados por artistas.</p>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>📊 Factores que afectan tus ingresos</h3>
+                    <ul>
+                        <li>Tipo de cuenta del oyente (Premium paga más)</li>
+                        <li>País de origen del oyente</li>
+                        <li>Acuerdos con distribuidor/disquera</li>
+                        <li>Porcentaje de streams válidos</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h3>💰 Tarifas promedio por stream</h3>
+                    <ul>
+                        <li>Global: $0.003 - $0.005 USD</li>
+                        <li>México: $0.045 - $0.095 MXN</li>
+                        <li>EEUU/Europa: 20-30% más alto</li>
+                        <li>Latinoamérica: 10-20% más bajo</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="examples">
+            <h2>Ejemplos Prácticos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Streams</th>
+                        <th>Ingreso Estimado (MXN)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10,000</td>
+                        <td class="highlight">$450</td>
+                    </tr>
+                    <tr>
+                        <td>100,000</td>
+                        <td class="highlight">$4,500</td>
+                    </tr>
+                    <tr>
+                        <td>1,000,000</td>
+                        <td class="highlight">$45,000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Esta calculadora proporciona estimaciones basadas en datos promedio reportados por artistas. Los valores reales pueden variar.</p>
+        <p>Última actualización: Junio 2025 | Tipo de cambio: 1 USD = 18.83 MXN</p>
+    </footer>
+    
+    <script>
+        // Verificación de código de acceso
+        document.getElementById('verify-code').addEventListener('click', function() {
+            const accessCode = document.getElementById('access-code').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            // Código válido es 2029
+            if (accessCode === '2029') {
+                document.getElementById('access-modal').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('access-code').value = '';
+                document.getElementById('access-code').focus();
+            }
+        });
+        
+        // Permitir presionar Enter para verificar el código
+        document.getElementById('access-code').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('verify-code').click();
+            }
+        });
+        
+        // Cálculo de ingresos
+        document.getElementById('calculate').addEventListener('click', function() {
+            // Obtener valores del formulario
+            const streams = parseInt(document.getElementById('streams').value) || 0;
+            const country = document.getElementById('country').value;
+            const accountType = document.getElementById('account-type').value;
+            const distribution = document.getElementById('distribution').value;
+            
+            // Validar que haya streams
+            if (streams <= 0) {
+                alert('Por favor ingresa un número válido de streams');
+                return;
+            }
+            
+            // Calcular tarifa base según país
+            let baseLow = 0.045; // MXN (México)
+            let baseHigh = 0.095; // MXN (México)
+            
+            switch(country) {
+                case 'usa':
+                    baseLow = 0.065;
+                    baseHigh = 0.125;
+                    break;
+                case 'europe':
+                    baseLow = 0.060;
+                    baseHigh = 0.115;
+                    break;
+                case 'latam':
+                    baseLow = 0.040;
+                    baseHigh = 0.080;
+                    break;
+                case 'mexico':
+                    // Valores por defecto ya asignados
+                    break;
+                case 'asia':
+                    baseLow = 0.035;
+                    baseHigh = 0.075;
+                    break;
+                case 'other':
+                    baseLow = 0.030;
+                    baseHigh = 0.070;
+                    break;
+                default: // global
+                    baseLow = 0.045;
+                    baseHigh = 0.095;
+            }
+            
+            // Ajustar por tipo de cuenta
+            switch(accountType) {
+                case 'premium':
+                    baseLow *= 1.3;
+                    baseHigh *= 1.3;
+                    break;
+                case 'free':
+                    baseLow *= 0.7;
+                    baseHigh *= 0.7;
+                    break;
+                default: // mixed
+                    // No se aplica ajuste
+            }
+            
+            // Aplicar porcentaje de distribución
+            let distributionRate = 1.0;
+            switch(distribution) {
+                case 'label70':
+                    distributionRate = 0.7;
+                    break;
+                case 'label50':
+                    distributionRate = 0.5;
+                    break;
+                case 'label30':
+                    distributionRate = 0.3;
+                    break;
+                default: // independent
+                    distributionRate = 1.0;
+            }
+            
+            // Calcular ingresos finales (solo usamos el rango bajo)
+            const lowEarnings = streams * baseLow * distributionRate;
+            
+            // Mostrar resultados
+            document.getElementById('low-range').textContent = formatMoney(lowEarnings);
+            
+            document.getElementById('results').style.display = 'block';
+            
+            // Hacer scroll suave a los resultados
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('download-pdf').addEventListener('click', function() {
+            // Get all the input values
+            const streams = parseInt(document.getElementById('streams').value) || 0;
+            const country = document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
+            const accountType = document.getElementById('account-type').options[document.getElementById('account-type').selectedIndex].text;
+            const distribution = document.getElementById('distribution').options[document.getElementById('distribution').selectedIndex].text;
+            
+            // Get the results
+            const lowRange = document.getElementById('low-range').textContent;
+            
+            // Create a new jsPDF instance
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add logo or title
+            doc.setFontSize(22);
+            doc.setTextColor(255, 122, 0);
+            doc.text('Reporte de Ingresos AristaMusic', 105, 20, null, null, 'center');
+            
+            // Add subtitle
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Estimación de ingresos por streams en Music Live', 105, 28, null, null, 'center');
+            
+            // Add date
+            const today = new Date();
+            doc.text(`Generado el: ${today.toLocaleDateString()}`, 105, 35, null, null, 'center');
+            
+            // Add a line
+            doc.setDrawColor(255, 122, 0);
+            doc.setLineWidth(0.5);
+            doc.line(20, 40, 190, 40);
+            
+            // Add user inputs section
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Tus Datos', 20, 50);
+            
+            doc.setFontSize(12);
+            doc.text(`Streams totales: ${streams.toLocaleString()}`, 20, 60);
+            doc.text(`País predominante: ${country}`, 20, 70);
+            doc.text(`Tipo de cuenta: ${accountType}`, 20, 80);
+            doc.text(`Distribución: ${distribution}`, 20, 90);
+            
+            // Add results section
+            doc.setFontSize(16);
+            doc.text('Resultado Estimado', 20, 110);
+            
+            doc.setFontSize(12);
+            doc.text(`Ingreso estimado: ${lowRange}`, 20, 120);
+            
+            // Add explanation section
+            doc.setFontSize(16);
+            doc.text('Cómo se calcula', 20, 140);
+            
+            doc.setFontSize(12);
+            const text = `Este valor es una estimación basada en:
+- Tarifas promedio por stream reportadas por artistas
+- Ajustes por país y tipo de cuenta del oyente
+- Porcentaje de distribución seleccionado
+- Se muestra el rango bajo de la estimación`;
+            
+            doc.text(text.split('\n'), 20, 150);
+            
+            // Add disclaimer
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Nota: Music Live, Kerim Music, Artista Music.', 105, 280, null, null, 'center');
+            
+            // Save the PDF
+            doc.save(`Reporte_AristaMusic_${today.getTime()}.pdf`);
+        });
+        
+        function formatMoney(amount) {
+            return '$' + amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + ' MXN';
+        }
+    </script>
+</body>
+</html>

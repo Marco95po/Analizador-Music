@@ -308,72 +308,489 @@
             <option value="trap">Trap/Rap</option>
             <option value="reggaeton">Reggaetón</option>
             <option value="rock">Rock/Metal</option>
-            <option value="jazz">Jazz/Soul/R&B</option>
-            <option value="classical">Clásica/Coral</option>
-            <option value="edm">EDM/Hyperpop/Phonk</option>
-            <option value="cumbia">Cumbia/Salsa/Folklore</option>
+            <option value="general">General (Todos los géneros)</option>
         </select>
     </div>
     
     <div id="pop" class="guide-section">
-        <h2><span class="emoji">🎵</span> Configuración para POP</h2>
+        <h2><span class="emoji">🎛️</span> CADENA PROFESIONAL DE VOZ PARA POP (Waves 12)</h2>
+        <p><strong>⚠️ Importante:</strong> Siempre edita primero (limpieza, cortes, crossfades, afinación básica), y luego aplica esta cadena.</p>
         
-        <h3><span class="emoji">🧼</span> LIMPIEZA INICIAL Y PREPARACIÓN</h3>
-        <p><strong>Waves Tune Real-Time:</strong> Velocidad de respuesta 0.2-0.4s para afinación natural</p>
-        <p><strong>FabFilter Pro-Q 3:</strong></p>
+        <h3><span class="emoji">1️⃣</span> DeEsser - Waves Sibilance</h3>
+        <p><strong>Objetivo:</strong> Controlar los excesos de "s", "sh", "ch".</p>
         <ul>
-            <li>Cortar 150-250 Hz para reducir barro</li>
-            <li>Controlar resonancias en 2.5-4 kHz con Dynamic EQ</li>
-            <li>Boost suave en 8-12 kHz para brillo</li>
+            <li>Modo: Split</li>
+            <li>Threshold: -20 a -35 dB (controlar sibilancia sin afectar brillo)</li>
+            <li>Frequency Range: 5 kHz a 9 kHz</li>
+            <li>Monitor en modo solo para encontrar el punto exacto</li>
         </ul>
         
-        <h3><span class="emoji">🎚️</span> CONTROL DINÁMICO</h3>
-        <p><strong>Compresor principal:</strong> Waves R-Vox o FabFilter Pro-C 2</p>
-        <p><strong>Ratio:</strong> 3:1 a 4:1 | <strong>Ataque:</strong> 10-30ms | <strong>Release:</strong> 50-100ms</p>
+        <h3><span class="emoji">2️⃣</span> EQ Sustractivo - Waves F6 (Dynamic EQ)</h3>
+        <p><strong>Objetivo:</strong> Quitar resonancias molestas y controlar dinámicamente zonas problemáticas.</p>
+        <ul>
+            <li>Banda 1 (HPF): 80 Hz o 100 Hz</li>
+            <li>Banda 2: Quitar mudanza (250-400 Hz, -2 a -4 dB)</li>
+            <li>Banda 3-4: Controlar nasalidad (600 Hz - 1 kHz, con detección dinámica)</li>
+            <li>Banda 5: Controlar agudos duros (2.5 a 5 kHz, con compresión dinámica)</li>
+            <li>Usa la detección sidechain para que solo actúe cuando haya exceso en esa frecuencia</li>
+        </ul>
         
-        <h3><span class="emoji">🎨</span> COLOR Y SATURACIÓN</h3>
-        <p><strong>Waves J37 Tape:</strong> Saturación suave (1-2%)</p>
-        <p><strong>FabFilter Saturn 2:</strong> Modo Tape con drive bajo en bandas altas</p>
+        <h3><span class="emoji">3️⃣</span> Compresión 1 (Suave) - Waves RCompressor</h3>
+        <p><strong>Objetivo:</strong> Nivelar la voz sin destruir su carácter.</p>
+        <ul>
+            <li>Ratio: 2:1</li>
+            <li>Attack: 15-25 ms</li>
+            <li>Release: 80-150 ms</li>
+            <li>Threshold: Reducción de 3-5 dB</li>
+        </ul>
         
-        <h3><span class="emoji">🌌</span> ESPACIO Y PROFUNDIDAD</h3>
-        <p><strong>Reverb (Waves H-Reverb):</strong> Pre-delay alto (60-100ms), decay 1.5-2s</p>
-        <p><strong>Delay (Waves H-Delay):</strong> Sincronizado 1/4D con feedback bajo</p>
+        <h3><span class="emoji">4️⃣</span> EQ Tonal - Waves SSL E-Channel o VEQ4</h3>
+        <p><strong>Objetivo:</strong> Dar color y tono a la voz.</p>
+        <ul>
+            <li>Realzar brillo (8 kHz): +2 a +4 dB</li>
+            <li>Presencia (3 kHz): +1 a +3 dB si hace falta</li>
+            <li>Cuerpo (150-200 Hz): +1 dB si suena muy delgada</li>
+            <li>Para color más analógico y con "pegada", usa el Waves SSL E-Channel</li>
+        </ul>
+        
+        <h3><span class="emoji">5️⃣</span> Compresión 2 (Color y Pegada) - Waves CLA-76 (modo Blue)</h3>
+        <p><strong>Objetivo:</strong> Control dinámico más agresivo + color.</p>
+        <ul>
+            <li>Ratio: 4:1 o 8:1</li>
+            <li>Attack: 3</li>
+            <li>Release: 7</li>
+            <li>Reducción de 5-7 dB</li>
+        </ul>
+        
+        <h3><span class="emoji">6️⃣</span> DeEsser Final - Waves DeEsser (opcional)</h3>
+        <p><strong>Objetivo:</strong> Segundo control si la voz sigue teniendo sibilancia post-EQ/comp.</p>
+        <ul>
+            <li>Banda: "Split" o "Wide"</li>
+            <li>Freq: 6 a 8 kHz</li>
+            <li>Solo si la voz aún molesta en agudos</li>
+        </ul>
+        
+        <h3><span class="emoji">7️⃣</span> Saturación Suave - Waves J37 o Kramer Tape</h3>
+        <p><strong>Objetivo:</strong> Añadir armónicos y presencia sin dureza.</p>
+        <ul>
+            <li>J37: Saturation 3-5, Tape Speed 15 ips, Bias 0.5 a 1.5</li>
+            <li>Kramer Tape: Ajusta el flux y wow/flutter a gusto</li>
+            <li>Ayuda a que la voz se sienta "en la cara" sin sonar digital</li>
+        </ul>
+        
+        <h3><span class="emoji">8️⃣</span> Reverb (Aux Send) - Waves H-Reverb</h3>
+        <p><strong>Objetivo:</strong> Espacialidad moderna sin ensuciar la mezcla.</p>
+        <ul>
+            <li>Pre-Delay: 40-80 ms (para no empastar la voz)</li>
+            <li>Decay: 1.5 a 2.5 segundos (ajusta al tempo)</li>
+            <li>EQ interno: corta < 150 Hz y > 10 kHz</li>
+            <li>Mezcla: Solo por envío (envía -12 a -20 dB)</li>
+        </ul>
+        
+        <h3><span class="emoji">9️⃣</span> Delay Estéreo (Aux Send) - Waves H-Delay</h3>
+        <p><strong>Objetivo:</strong> Profundidad y rebote rítmico.</p>
+        <ul>
+            <li>Tiempo: 1/8 o 1/4 (sincronizado al tempo)</li>
+            <li>Feedback: 15-25%</li>
+            <li>Mod: Activado, Depth bajo</li>
+            <li>LoFi: Activado para efecto más cálido</li>
+            <li>Filtro interno: HPF 150 Hz / LPF 8 kHz</li>
+            <li>Automatiza envíos en frases clave</li>
+        </ul>
+        
+        <h3><span class="emoji">🔟</span> Vocal Rider (opcional) - Waves Vocal Rider</h3>
+        <p><strong>Objetivo:</strong> Nivelar volúmenes en el tiempo sin compresión.</p>
+        <ul>
+            <li>Target: -18 a -14 dB (dependiendo del mix bus)</li>
+            <li>Range: -6 a +6 dB</li>
+            <li>Sensitivity: Ajusta hasta que detecte bien las frases suaves</li>
+        </ul>
         
         <div class="tip-box">
-            <p><strong><span class="emoji">🧪</span> TIP PROFESIONAL:</strong> Para coros pop, duplica la pista y aplica un pitch shift de +3/-3 cent con mezcla al 20% para crear amplitud.</p>
+            <p><strong><span class="emoji">📌</span> EJEMPLO DE ORDEN EN EL DAW:</strong></p>
+            <ol>
+                <li>Waves Sibilance</li>
+                <li>F6 Dynamic EQ</li>
+                <li>RCompressor</li>
+                <li>SSL E-Channel</li>
+                <li>CLA-76</li>
+                <li>(opcional) Waves DeEsser</li>
+                <li>J37 Tape</li>
+                <li>Sends: H-Reverb (AUX), H-Delay (AUX)</li>
+                <li>Vocal Rider (Post cadena)</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div id="rock" class="guide-section">
+        <h2><span class="emoji">🎙️</span> CADENA VOCAL ROCK PROFESIONAL (Waves 12)</h2>
+        
+        <h3><span class="emoji">1️⃣</span> De-Esser Inicial</h3>
+        <p><strong>Plugin:</strong> Waves Sibilance</p>
+        <ul>
+            <li>Modo: "Sharp" o "Broad" según el timbre vocal</li>
+            <li>Threshold: Ajusta hasta que controle las "S" sin matar el brillo</li>
+            <li>Frequency: 5 kHz a 8 kHz (ajusta según el cantante)</li>
+            <li>Controla sibilancias tempranas sin dañar la agresividad</li>
+        </ul>
+        
+        <h3><span class="emoji">2️⃣</span> Corrección Tonal / EQ Sustractiva</h3>
+        <p><strong>Plugin:</strong> Waves Q10 o F6 Dynamic EQ</p>
+        <ul>
+            <li>Corte Bajo: HPF en 80–100 Hz</li>
+            <li>Reducciones comunes:
+                <ul>
+                    <li>200–300 Hz (quita nasalidad/barro)</li>
+                    <li>400–500 Hz (reduce congestión)</li>
+                    <li>1–2 kHz (quita dureza si es necesario)</li>
+                </ul>
+            </li>
+            <li>Usa F6 para mover frecuencias dinámicamente (según energía vocal)</li>
+            <li>Limpieza quirúrgica sin quitar carácter</li>
+        </ul>
+        
+        <h3><span class="emoji">3️⃣</span> Compresión Principal</h3>
+        <p><strong>Plugin:</strong> CLA-76 o Renaissance Compressor</p>
+        <ul>
+            <li>Modo: "Bluey" (CLA-76) para ataque rápido, sonido agresivo</li>
+            <li>Attack: 3–5</li>
+            <li>Release: 6–7</li>
+            <li>Ratio: 4:1 o 8:1</li>
+            <li>Gain Reduction: 3–7 dB (rock aguanta compresión más intensa)</li>
+            <li>Estabiliza sin perder la actitud vocal</li>
+        </ul>
+        
+        <h3><span class="emoji">4️⃣</span> Compresión Paralela (opcional pero poderosa)</h3>
+        <p><strong>Plugin:</strong> CLA-2A o MV2 en un bus auxiliar</p>
+        <ul>
+            <li>Envia la voz a este canal</li>
+            <li>Comprime fuerte (10+ dB)</li>
+            <li>Mezcla al gusto (20–50%)</li>
+            <li>Gana cuerpo y pegada sin matar la dinámica original</li>
+        </ul>
+        
+        <h3><span class="emoji">5️⃣</span> EQ Adictivo (Tono y Brillo)</h3>
+        <p><strong>Plugin:</strong> PuigTec EQP-1A o SSL E-Channel</p>
+        <ul>
+            <li>Boost en agudos: 10–12 kHz +3 a +6 dB</li>
+            <li>Low shelf: 100 Hz con cuidado si quieres cuerpo</li>
+            <li>Presencia: 3–5 kHz si necesita más claridad</li>
+            <li>Agrega color vintage o moderno dependiendo del estilo</li>
+        </ul>
+        
+        <h3><span class="emoji">6️⃣</span> Saturación Armónica</h3>
+        <p><strong>Plugin:</strong> Kramer HLS Channel, Abbey Road Saturator o J37 Tape</p>
+        <ul>
+            <li>Drive: sutil, que no distorsione demasiado</li>
+            <li>Ajusta el bias o wow/flutter para dar carácter (especial para indie/prog)</li>
+            <li>O en paralelo si quieres solo un toque de calor</li>
+            <li>Da cuerpo, color y "actitud" rockera real</li>
+        </ul>
+        
+        <h3><span class="emoji">7️⃣</span> Reverb Ambiental</h3>
+        <p><strong>Plugin:</strong> H-Reverb o Abbey Road Plates</p>
+        <ul>
+            <li>Tipo: Plate (brilla más en el rock)</li>
+            <li>Decay: 1.2 – 2.5 s según la canción</li>
+            <li>Pre-Delay: 30–80 ms para no embarrar la voz</li>
+            <li>EQ interno para quitar low-end (<300 Hz)</li>
+            <li>Ambiente controlado que no roba presencia</li>
+        </ul>
+        
+        <h3><span class="emoji">8️⃣</span> Delay Creativo</h3>
+        <p><strong>Plugin:</strong> H-Delay o SuperTap</p>
+        <ul>
+            <li>Modo: Ping Pong o slapback (según estilo de rock)</li>
+            <li>Time: 1/8 o 1/4 sincrónico</li>
+            <li>Feedback: 10–30%</li>
+            <li>LoFi on: para texturas punk/indie</li>
+            <li>Crea profundidad sin saturar el espacio</li>
+        </ul>
+        
+        <h3><span class="emoji">9️⃣</span> De-Esser Final (Opcional)</h3>
+        <p><strong>Plugin:</strong> Waves DeEsser</p>
+        <ul>
+            <li>Si el procesamiento anterior levantó sibilancias</li>
+            <li>Aplica un segundo de-esser más suave</li>
+            <li>Última barrida para evitar que raspe en mezcla final</li>
+        </ul>
+        
+        <h3><span class="emoji">🔟</span> Automatización y FX Manuales</h3>
+        <ul>
+            <li>Automatiza reverb, delay, ganancia en frases importantes</li>
+            <li>Puedes usar dobles, harmonizers (Doubler, Vocal Bender) para coros</li>
+        </ul>
+        
+        <div class="tip-box">
+            <p><strong><span class="emoji">🧩</span> TIPS ESPECÍFICOS POR SUBGÉNERO:</strong></p>
+            <table>
+                <tr>
+                    <th>Subgénero</th>
+                    <th>Saturación</th>
+                    <th>Delay</th>
+                    <th>Reverb</th>
+                    <th>Estética de Voz</th>
+                </tr>
+                <tr>
+                    <td>Rock Clásico</td>
+                    <td>J37 Tape, CLA76</td>
+                    <td>Slapback mono</td>
+                    <td>Plate vintage</td>
+                    <td>Cálida y natural</td>
+                </tr>
+                <tr>
+                    <td>Rock Progresivo</td>
+                    <td>Abbey Road Sat</td>
+                    <td>Ping Pong</td>
+                    <td>Espacial larga</td>
+                    <td>Etérea y profunda</td>
+                </tr>
+                <tr>
+                    <td>Indie Rock</td>
+                    <td>Kramer HLS</td>
+                    <td>LoFi Delay</td>
+                    <td>Room sutil</td>
+                    <td>Íntima y cruda</td>
+                </tr>
+                <tr>
+                    <td>Punk Rock</td>
+                    <td>Ninguna o LoFi</td>
+                    <td>Slapback</td>
+                    <td>Muy poca</td>
+                    <td>Directa y agresiva</td>
+                </tr>
+                <tr>
+                    <td>Rock Alternativo</td>
+                    <td>Combinado</td>
+                    <td>H-Delay mod</td>
+                    <td>Medium Plate</td>
+                    <td>Moderna pero orgánica</td>
+                </tr>
+            </table>
         </div>
     </div>
     
     <div id="trap" class="guide-section">
-        <h2><span class="emoji">🎵</span> Configuración para TRAP/RAP</h2>
+        <h2><span class="emoji">🎙️</span> CADENA VOCAL TRAP/RAP PROFESIONAL (Waves 12)</h2>
         
-        <h3><span class="emoji">🧼</span> LIMPIEZA INICIAL Y PREPARACIÓN</h3>
-        <p><strong>Waves Tune Real-Time:</strong> Velocidad rápida (0.1-0.3s) para corrección transparente</p>
-        <p><strong>FabFilter Pro-Q 3:</strong></p>
+        <h3><span class="emoji">1️⃣</span> Limpieza & Preparación Inicial</h3>
+        <p><strong>Plugin:</strong> Waves NS1 Noise Suppressor</p>
         <ul>
-            <li>Boost en medios (1-3 kHz) para claridad</li>
-            <li>Corte alto-paso a 80 Hz</li>
-            <li>Notch resonancias agresivas en 5-7 kHz</li>
+            <li>Elimina ruido de fondo (aires, hum, hiss) antes de procesar</li>
+            <li>Sensitivity al 20-40%, lo justo para no afectar las consonantes</li>
         </ul>
         
-        <h3><span class="emoji">🎚️</span> CONTROL DINÁMICO</h3>
-        <p><strong>Compresor principal:</strong> CLA-76 (modo Bluey) o FabFilter Pro-C 2</p>
-        <p><strong>Ratio:</strong> 4:1 a 6:1 | <strong>Ataque:</strong> 5-15ms | <strong>Release:</strong> 30-80ms</p>
+        <p><strong>Plugin:</strong> Waves F6 Floating-Band Dynamic EQ</p>
+        <ul>
+            <li>Corrección sustractiva quirúrgica</li>
+            <li>Bandas recomendadas:
+                <ul>
+                    <li>100-200 Hz: Atenuar resonancias nasales</li>
+                    <li>400-500 Hz: Quitar boxiness</li>
+                    <li>3-5 kHz: Controlar sibilancias agresivas</li>
+                </ul>
+            </li>
+            <li>Activar modo dinámico si hay mucha variación en el tono</li>
+        </ul>
         
-        <h3><span class="emoji">🎨</span> COLOR Y SATURACIÓN</h3>
-        <p><strong>FabFilter Saturn 2:</strong> Distorsión multibanda en agudos (5kHz+)</p>
-        <p><strong>Waves Abbey Road Saturator:</strong> Drive bajo para agregar presencia</p>
+        <h3><span class="emoji">2️⃣</span> Compresión</h3>
+        <p><strong>Plugin:</strong> Waves R-Vox</p>
+        <ul>
+            <li>Compresión rápida y efectiva</li>
+            <li>Threshold: -15 dB a -25 dB (según agresividad)</li>
+            <li>Gate: Útil si hay pausas largas o silencios</li>
+        </ul>
         
-        <h3><span class="emoji">🌌</span> ESPACIO Y PROFUNDIDAD</h3>
-        <p><strong>Reverb:</strong> Mínima o nula (solo en adlibs)</p>
-        <p><strong>Delay (FabFilter Timeless 3):</strong> Stereo sync con filtro low-pass</p>
+        <p><strong>Plugin:</strong> Waves CLA-76 (modo Bluey)</p>
+        <ul>
+            <li>Compresor rápido, ideal para estilo agresivo</li>
+            <li>Ratio: 4:1 o 8:1</li>
+            <li>Attack: 3 a 5</li>
+            <li>Release: 5 a 7 (más rápido para mantener energía)</li>
+            <li>Ajustar Input/Output visualizando en VU meter</li>
+        </ul>
         
-        <div class="tip-box">
-            <p><strong><span class="emoji">🧪</span> TIP PROFESIONAL:</strong> Crea una pista paralela con compresión extrema (10:1 ratio) y saturación para mezclar bajo la voz principal y aumentar densidad.</p>
-        </div>
+        <h3><span class="emoji">3️⃣</span> Ecualización Estética</h3>
+        <p><strong>Plugin:</strong> Waves API 550B</p>
+        <ul>
+            <li>Realzar presencia, brillo y cuerpo</li>
+            <li>+2 a +4 dB en 2.5 kHz o 5 kHz (presencia)</li>
+            <li>+1 a +3 dB en 12 kHz (brillo y aire)</li>
+            <li>+2 dB en 100 Hz si falta cuerpo (solo si no interfiere con el beat)</li>
+        </ul>
+        
+        <h3><span class="emoji">4️⃣</span> Saturación y Color</h3>
+        <p><strong>Plugin:</strong> Waves J37 Tape o Kramer Master Tape</p>
+        <ul>
+            <li>Añadir calidez y armónicos</li>
+            <li>Saturation: 10–20%</li>
+            <li>Wow & Flutter: apagados o muy bajos para rap moderno</li>
+            <li>Delay: apagado (o usar para efecto experimental en dobles)</li>
+        </ul>
+        
+        <p><strong>Opcional:</strong> Waves Abbey Road Saturator</p>
+        <ul>
+            <li>Color analógico y control de armónicos</li>
+            <li>Drive bajo, activar solo si la voz suena muy digital o plana</li>
+        </ul>
+        
+        <h3><span class="emoji">5️⃣</span> De-essing</h3>
+        <p><strong>Plugin:</strong> Waves Sibilance</p>
+        <ul>
+            <li>Eliminar "S" y "Sh" sin afectar claridad</li>
+            <li>Threshold: -30 a -40 dB</li>
+            <li>Mode: Modern</li>
+            <li>Range: Centrado entre 5 kHz y 8 kHz</li>
+        </ul>
+        
+        <h3><span class="emoji">6️⃣</span> Espacialidad / FX</h3>
+        <p><strong>Plugin:</strong> Waves H-Delay</p>
+        <ul>
+            <li>Eco rítmico para darle dimensión</li>
+            <li>Tiempo: Sincronizado a tempo (1/4 o 1/8 con ping-pong)</li>
+            <li>Feedback: 10–25%</li>
+            <li>LoFi: Activado para estilo old school / grime</li>
+        </ul>
+        
+        <p><strong>Plugin:</strong> Waves RVerb (para efecto leve en adlibs o dobles)</p>
+        <ul>
+            <li>Pre-Delay: 50–100 ms (separa la voz del beat)</li>
+            <li>Reverb Time: 0.5 a 1.2s</li>
+            <li>Mix: Bajo (5–10%)</li>
+        </ul>
+        
+        <h3><span class="emoji">7️⃣</span> Control Dinámico Final</h3>
+        <p><strong>Plugin:</strong> Waves MV2</p>
+        <ul>
+            <li>Levanta palabras suaves sin perder fuerza</li>
+            <li>Low Level: +20 dB (según necesidad)</li>
+            <li>High Level: -5 a -10 dB</li>
+            <li>Excelente para mantener energía constante en pasajes rápidos</li>
+        </ul>
+        
+        <h3><span class="emoji">8️⃣</span> Limitación Suave (Opcional)</h3>
+        <p><strong>Plugin:</strong> Waves L1 Ultramaximizer</p>
+        <ul>
+            <li>Controlar picos sin comprimir de más</li>
+            <li>Threshold: -1 a -3 dB</li>
+            <li>Out Ceiling: -0.2 dB</li>
+            <li>Release: 50–100 ms</li>
+        </ul>
     </div>
     
-    <!-- Secciones para otros géneros (similar estructura) -->
+    <div id="reggaeton" class="guide-section">
+        <h2><span class="emoji">🎙️</span> CADENA VOCAL REGGAETÓN PROFESIONAL (Waves 12)</h2>
+        
+        <h3><span class="emoji">1️⃣</span> Edición y limpieza (antes de plugins)</h3>
+        <p><strong>Corrección de timing y afinación:</strong></p>
+        <ul>
+            <li>Plugin: Waves Tune Real-Time o Waves Tune</li>
+            <li>Ajusta en tiempo real con velocidad rápida</li>
+            <li>Tonalidad de la canción configurada correctamente</li>
+        </ul>
+        
+        <p><strong>Limpieza de respiraciones o ruidos:</strong></p>
+        <ul>
+            <li>Manual en DAW o con: Waves NS1 Noise Suppressor</li>
+            <li>Coloca antes del compresor si hay mucho ruido de fondo</li>
+        </ul>
+        
+        <h3><span class="emoji">2️⃣</span> Gain Staging</h3>
+        <ul>
+            <li>Asegúrate que la señal entre a -18 dBFS RMS</li>
+            <li>Evita saturación y mantén headroom</li>
+        </ul>
+        
+        <h3><span class="emoji">3️⃣</span> EQ Correctivo</h3>
+        <p><strong>Plugin:</strong> Waves Q10 Equalizer o F6 Dynamic EQ</p>
+        <ul>
+            <li>HPF en 80-100 Hz para quitar graves innecesarios</li>
+            <li>Corta boxiness en 200-400 Hz si es necesario</li>
+            <li>Usa F6 para cortar sibilancias agresivas o nasalidad dinámicamente</li>
+        </ul>
+        
+        <h3><span class="emoji">4️⃣</span> Compresión principal</h3>
+        <p><strong>Plugin:</strong> R-Vox o CLA-2A</p>
+        <ul>
+            <li>R-Vox: Compresión entre -6 y -10 dB de reducción</li>
+            <li>Usa el "Gate" solo si hay ruido molesto entre frases</li>
+            <li>CLA-2A: sonido más redondo y musical para versos melódicos</li>
+        </ul>
+        
+        <h3><span class="emoji">5️⃣</span> De-esser</h3>
+        <p><strong>Plugin:</strong> Waves DeEsser o Sibilance</p>
+        <ul>
+            <li>Frecuencia entre 5 kHz – 7 kHz (ajusta según la voz)</li>
+            <li>Sibilance es más moderno y musical, ideal para voces brillantes</li>
+        </ul>
+        
+        <h3><span class="emoji">6️⃣</span> EQ Tonal (Color y brillo)</h3>
+        <p><strong>Plugin:</strong> PuigTec EQP-1A o Magma EQ</p>
+        <ul>
+            <li>Boost leve en 4 kHz – 6 kHz para presencia</li>
+            <li>Añade "aire" en 10 kHz – 12 kHz si lo necesita</li>
+            <li>Puedes combinar con Shelving EQ suave para brillo constante</li>
+        </ul>
+        
+        <h3><span class="emoji">7️⃣</span> Compresión paralela (Opcional para más punch)</h3>
+        <p><strong>Plugin:</strong> CLA-76 en modo Bluey o Blacky</p>
+        <ul>
+            <li>Ratio: 4:1 o 8:1</li>
+            <li>Ataque rápido (3-5), release rápido (7)</li>
+            <li>Mezclado en paralelo al canal vocal</li>
+            <li>Bajo en volumen pero con mucha compresión para dar presencia</li>
+        </ul>
+        
+        <h3><span class="emoji">8️⃣</span> Saturación / Color</h3>
+        <p><strong>Plugin:</strong> Kramer Master Tape o J37 Tape</p>
+        <ul>
+            <li>Leve saturación para calidez y densidad vocal</li>
+            <li>Solo un toque: evita que se distorsione</li>
+            <li>También puedes usar MV2 para levantar detalles sin perder dinámica</li>
+        </ul>
+        
+        <h3><span class="emoji">9️⃣</span> Reverb (ambiente sutil)</h3>
+        <p><strong>Plugin:</strong> RVerb o H-Reverb</p>
+        <ul>
+            <li>Tipo: Plate o Small Hall</li>
+            <li>Pre-delay: 30-50 ms (evita que nuble la voz)</li>
+            <li>Decay corto: 0.8 – 1.4 s</li>
+            <li>Mezcla en bus auxiliar (envío), nunca insertado</li>
+        </ul>
+        
+        <h3><span class="emoji">🔟</span> Delay (Efecto rítmico y espacial)</h3>
+        <p><strong>Plugin:</strong> H-Delay</p>
+        <ul>
+            <li>Tempo Sync activado</li>
+            <li>Tipos: 1/8 o 1/4 en versos, 1/16 dotted para coros o adlibs</li>
+            <li>HPF/LPF para limpiar (100 Hz y 8 kHz)</li>
+            <li>Feedback low para delays sutiles</li>
+            <li>Automatiza delays en palabras clave (delay throws)</li>
+        </ul>
+        
+        <h3><span class="emoji">➕</span> Doblajes / Adlibs / Harmonías</h3>
+        <ul>
+            <li>Trata por separado con menos compresión</li>
+            <li>Usa más reverb y delay para darles profundidad</li>
+            <li>Sin competir con la voz principal</li>
+        </ul>
+        
+        <div class="tip-box">
+            <p><strong><span class="emoji">📦</span> CADENA SUGERIDA EN ORDEN:</strong></p>
+            <ol>
+                <li>Waves Tune Real-Time (afinación)</li>
+                <li>NS1 / F6 (ruido dinámico si aplica)</li>
+                <li>F6 (EQ correctivo)</li>
+                <li>R-Vox o CLA-2A (compresión)</li>
+                <li>DeEsser / Sibilance</li>
+                <li>PuigTec / Magma EQ (tonal)</li>
+                <li>MV2 / Saturación (color y presencia)</li>
+                <li>CLA-76 paralelo (si se necesita punch)</li>
+                <li>Reverb (RVerb / H-Reverb – en bus)</li>
+                <li>H-Delay (en bus)</li>
+            </ol>
+        </div>
+    </div>
     
     <div id="general" class="guide-section active">
         <h2><span class="emoji">🎙️</span> GUÍA GENERAL PARA TODOS LOS GÉNEROS</h2>
@@ -449,22 +866,6 @@
                     <td>Plate corta</td>
                     <td>Slap delay</td>
                     <td>J37 o Kramer</td>
-                </tr>
-                <tr>
-                    <td>Jazz / Soul / R&B</td>
-                    <td>EQ suave, cortar 300Hz</td>
-                    <td>CLA-2A</td>
-                    <td>Reverb natural</td>
-                    <td>Delay corto</td>
-                    <td>Saturn cálido</td>
-                </tr>
-                <tr>
-                    <td>Clásica / Coral / Litúrgica</td>
-                    <td>Solo EQ quirúrgico</td>
-                    <td>Compresión mínima</td>
-                    <td>Hall largo (Pro-R)</td>
-                    <td>Ninguno</td>
-                    <td>No usar</td>
                 </tr>
             </table>
         </div>

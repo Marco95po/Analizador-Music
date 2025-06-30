@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Profesional para Trabajar Voces en Estudio</title>
+    <style>
+        :root {
+            --primary-bg: #121212;
+            --secondary-bg: #1E1E1E;
+            --accent-color: #FF6B35;
+            --text-primary: #F5F5F5;
+            --text-secondary: #B3B3B3;
+            --card-shadow: 0 8px 30px rgba(255, 107, 53, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: var(--primary-bg);
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            font-weight: 700;
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            position: relative;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+        }
+        
+        h2 {
+            color: var(--accent-color);
+            margin-top: 35px;
+            padding-left: 12px;
+            font-weight: 600;
+            font-size: clamp(1.4rem, 4vw, 1.6rem);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        h3 {
+            font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+        }
+        
+        .genre-selector {
+            background-color: var(--secondary-bg);
+            color: var(--text-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        
+        select {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            font-size: clamp(14px, 4vw, 16px);
+            background-color: var(--secondary-bg);
+            color: var(--text-primary);
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF6B35'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+        
+        .guide-section {
+            display: none;
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+        }
+        
+        th, td {
+            border: 1px solid #333;
+            padding: 10px 12px;
+            text-align: left;
+            min-width: 120px;
+        }
+        
+        th {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        td {
+            font-size: 0.85rem;
+            white-space: normal;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(255, 107, 53, 0.05);
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 107, 53, 0.1);
+        }
+        
+        .tip-box {
+            background-color: rgba(255, 107, 53, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip-box strong {
+            color: var(--accent-color);
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        ul, ol {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 5px;
+        }
+        
+        li:before {
+            content: '•';
+            color: var(--accent-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: clamp(14px, 4vw, 16px);
+        }
+        
+        strong {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        em {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+        
+        /* Efectos hover para desktop */
+        @media (hover: hover) {
+            .guide-section:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 35px rgba(255, 107, 53, 0.15);
+            }
+        }
+        
+        /* Media Queries para móvil */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                margin-bottom: 20px;
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                margin-top: 30px;
+                font-size: 1.4rem;
+            }
+            
+            .genre-selector {
+                padding: 12px;
+                margin-bottom: 25px;
+            }
+            
+            select {
+                padding: 10px 12px;
+                font-size: 15px;
+            }
+            
+            .guide-section {
+                padding: 15px;
+            }
+            
+            table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+                padding-left: 8px;
+                border-left-width: 3px;
+            }
+            
+            .tip-box {
+                padding: 12px;
+            }
+            
+            ul, ol {
+                padding-left: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎙️ GUÍA PROFESIONAL PARA TRABAJAR VOCES EN ESTUDIO</h1>
+    <p><em>Plugins: Waves 12 & FabFilter | Aplicación: Todos los géneros musicales</em></p>
+    
+    <div class="genre-selector">
+        <h3>Selecciona tu género musical:</h3>
+        <select id="genreSelector" onchange="showGuide()">
+            <option value="">-- Selecciona un género --</option>
+            <option value="pop">Pop</option>
+            <option value="trap">Trap/Rap</option>
+            <option value="reggaeton">Reggaetón</option>
+            <option value="rock">Rock/Metal</option>
+            <option value="jazz">Jazz/Soul/R&B</option>
+            <option value="classical">Clásica/Coral</option>
+            <option value="edm">EDM/Hyperpop/Phonk</option>
+            <option value="cumbia">Cumbia/Salsa/Folklore</option>
+        </select>
+    </div>
+    
+    <div id="pop" class="guide-section">
+        <h2><span class="emoji">🎵</span> Configuración para POP</h2>
+        
+        <h3><span class="emoji">🧼</span> LIMPIEZA INICIAL Y PREPARACIÓN</h3>
+        <p><strong>Waves Tune Real-Time:</strong> Velocidad de respuesta 0.2-0.4s para afinación natural</p>
+        <p><strong>FabFilter Pro-Q 3:</strong></p>
+        <ul>
+            <li>Cortar 150-250 Hz para reducir barro</li>
+            <li>Controlar resonancias en 2.5-4 kHz con Dynamic EQ</li>
+            <li>Boost suave en 8-12 kHz para brillo</li>
+        </ul>
+        
+        <h3><span class="emoji">🎚️</span> CONTROL DINÁMICO</h3>
+        <p><strong>Compresor principal:</strong> Waves R-Vox o FabFilter Pro-C 2</p>
+        <p><strong>Ratio:</strong> 3:1 a 4:1 | <strong>Ataque:</strong> 10-30ms | <strong>Release:</strong> 50-100ms</p>
+        
+        <h3><span class="emoji">🎨</span> COLOR Y SATURACIÓN</h3>
+        <p><strong>Waves J37 Tape:</strong> Saturación suave (1-2%)</p>
+        <p><strong>FabFilter Saturn 2:</strong> Modo Tape con drive bajo en bandas altas</p>
+        
+        <h3><span class="emoji">🌌</span> ESPACIO Y PROFUNDIDAD</h3>
+        <p><strong>Reverb (Waves H-Reverb):</strong> Pre-delay alto (60-100ms), decay 1.5-2s</p>
+        <p><strong>Delay (Waves H-Delay):</strong> Sincronizado 1/4D con feedback bajo</p>
+        
+        <div class="tip-box">
+            <p><strong><span class="emoji">🧪</span> TIP PROFESIONAL:</strong> Para coros pop, duplica la pista y aplica un pitch shift de +3/-3 cent con mezcla al 20% para crear amplitud.</p>
+        </div>
+    </div>
+    
+    <div id="trap" class="guide-section">
+        <h2><span class="emoji">🎵</span> Configuración para TRAP/RAP</h2>
+        
+        <h3><span class="emoji">🧼</span> LIMPIEZA INICIAL Y PREPARACIÓN</h3>
+        <p><strong>Waves Tune Real-Time:</strong> Velocidad rápida (0.1-0.3s) para corrección transparente</p>
+        <p><strong>FabFilter Pro-Q 3:</strong></p>
+        <ul>
+            <li>Boost en medios (1-3 kHz) para claridad</li>
+            <li>Corte alto-paso a 80 Hz</li>
+            <li>Notch resonancias agresivas en 5-7 kHz</li>
+        </ul>
+        
+        <h3><span class="emoji">🎚️</span> CONTROL DINÁMICO</h3>
+        <p><strong>Compresor principal:</strong> CLA-76 (modo Bluey) o FabFilter Pro-C 2</p>
+        <p><strong>Ratio:</strong> 4:1 a 6:1 | <strong>Ataque:</strong> 5-15ms | <strong>Release:</strong> 30-80ms</p>
+        
+        <h3><span class="emoji">🎨</span> COLOR Y SATURACIÓN</h3>
+        <p><strong>FabFilter Saturn 2:</strong> Distorsión multibanda en agudos (5kHz+)</p>
+        <p><strong>Waves Abbey Road Saturator:</strong> Drive bajo para agregar presencia</p>
+        
+        <h3><span class="emoji">🌌</span> ESPACIO Y PROFUNDIDAD</h3>
+        <p><strong>Reverb:</strong> Mínima o nula (solo en adlibs)</p>
+        <p><strong>Delay (FabFilter Timeless 3):</strong> Stereo sync con filtro low-pass</p>
+        
+        <div class="tip-box">
+            <p><strong><span class="emoji">🧪</span> TIP PROFESIONAL:</strong> Crea una pista paralela con compresión extrema (10:1 ratio) y saturación para mezclar bajo la voz principal y aumentar densidad.</p>
+        </div>
+    </div>
+    
+    <!-- Secciones para otros géneros (similar estructura) -->
+    
+    <div id="general" class="guide-section active">
+        <h2><span class="emoji">🎙️</span> GUÍA GENERAL PARA TODOS LOS GÉNEROS</h2>
+        
+        <h3><span class="emoji">🧼</span> LIMPIEZA INICIAL Y PREPARACIÓN</h3>
+        <p><strong>Corrección tonal & dinámica básica</strong></p>
+        <p><strong>Waves Tune Real-Time</strong> (para afinación natural en pop, trap, reggaetón, etc.)</p>
+        <ul>
+            <li>Velocidad de respuesta rápida (0.1-0.3s) para estilos modernos (trap, pop, K-pop)</li>
+            <li>Respuestas más suaves (0.5-1.0s) para baladas, jazz, soul</li>
+        </ul>
+        
+        <p><strong>FabFilter Pro-Q 3 (EQ quirúrgico)</strong></p>
+        <ul>
+            <li>Elimina frecuencias problemáticas:
+                <ul>
+                    <li>150-250 Hz: barro/nasalidad</li>
+                    <li>2.5-4 kHz: resonancias duras</li>
+                    <li>5-12 kHz: brillo excesivo si hay sibilancia</li>
+                </ul>
+            </li>
+            <li>Usa Dynamic EQ en FabFilter para controlar resonancias móviles</li>
+        </ul>
+        
+        <h3><span class="emoji">🎚️</span> CONTROL DINÁMICO</h3>
+        <p><strong>Compresión vocal principal</strong></p>
+        <p><strong>Waves R-Vox / CLA-2A / CLA-76</strong></p>
+        <ul>
+            <li>R-Vox: para pop, trap, reggaetón (compresión sencilla, cálida)</li>
+            <li>CLA-2A: música coral, clásica, baladas, góspel (suave, musical)</li>
+            <li>CLA-76 (modo Bluey): rock, metal, punk, soul (rápido, agresivo)</li>
+        </ul>
+        
+        <h3><span class="emoji">🧩</span> PARÁMETROS CLAVE POR GÉNERO</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <tr>
+                    <th>Género</th>
+                    <th>EQ</th>
+                    <th>Compresión</th>
+                    <th>Reverb</th>
+                    <th>Delay</th>
+                    <th>Saturación</th>
+                </tr>
+                <tr>
+                    <td>Pop</td>
+                    <td>Brillo en 8-12k, cortar 300Hz</td>
+                    <td>R-Vox / Pro-C 2</td>
+                    <td>H-Reverb brillante</td>
+                    <td>1/4D</td>
+                    <td>Saturn (suave)</td>
+                </tr>
+                <tr>
+                    <td>Trap / Rap</td>
+                    <td>Agudos + medios</td>
+                    <td>CLA-76 / Pro-C 2</td>
+                    <td>Sutil o nulo</td>
+                    <td>H-Delay Sync</td>
+                    <td>Saturn (bandas altas)</td>
+                </tr>
+                <tr>
+                    <td>Reggaetón</td>
+                    <td>200Hz & 5kHz boost</td>
+                    <td>CLA-2A / R-Vox</td>
+                    <td>Pre-delay alto</td>
+                    <td>Ping-pong</td>
+                    <td>Kramer Tape</td>
+                </tr>
+                <tr>
+                    <td>Rock / Metal</td>
+                    <td>Cortar 250Hz, boost 4kHz</td>
+                    <td>CLA-76 (modo Blue)</td>
+                    <td>Plate corta</td>
+                    <td>Slap delay</td>
+                    <td>J37 o Kramer</td>
+                </tr>
+                <tr>
+                    <td>Jazz / Soul / R&B</td>
+                    <td>EQ suave, cortar 300Hz</td>
+                    <td>CLA-2A</td>
+                    <td>Reverb natural</td>
+                    <td>Delay corto</td>
+                    <td>Saturn cálido</td>
+                </tr>
+                <tr>
+                    <td>Clásica / Coral / Litúrgica</td>
+                    <td>Solo EQ quirúrgico</td>
+                    <td>Compresión mínima</td>
+                    <td>Hall largo (Pro-R)</td>
+                    <td>Ninguno</td>
+                    <td>No usar</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h3><span class="emoji">🧪</span> TIPS PROFESIONALES</h3>
+        <ul>
+            <li><span class="emoji">🔁</span> Paraleliza la compresión: duplica la voz y aplica compresión extrema solo a la duplicada (útil para trap, EDM)</li>
+            <li><span class="emoji">🎛️</span> Automatiza delays y reverbs por frases para más naturalidad</li>
+            <li><span class="emoji">👂</span> Revisa en mono siempre</li>
+            <li><span class="emoji">🧼</span> Cuidado con stacking de efectos: no más de 3 etapas de reverb/delay por pista vocal</li>
+            <li><span class="emoji">📐</span> Usa buses auxiliares para mantener limpio el canal principal</li>
+        </ul>
+    </div>
+    
+    <script>
+        function showGuide() {
+            // Oculta todas las secciones
+            document.querySelectorAll('.guide-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Muestra la sección seleccionada o la general
+            const selector = document.getElementById('genreSelector');
+            const selectedGenre = selector.value;
+            
+            if (selectedGenre && document.getElementById(selectedGenre)) {
+                document.getElementById(selectedGenre).classList.add('active');
+            } else {
+                document.getElementById('general').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

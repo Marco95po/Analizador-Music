@@ -142,42 +142,70 @@
             z-index: -1;
         }
         
-        .bottom-menu {
+        /* Menú hamburguesa */
+        .hamburger-menu {
             position: fixed;
-            bottom: -100px;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            border-top: 1px solid rgba(255, 165, 0, 0.3);
-            animation: slideUp 0.8s ease-out forwards;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
         }
         
-        .menu-button {
-            background-color: transparent;
-            color: #FFA500;
-            border: 2px solid #FFA500;
-            border-radius: 25px;
-            padding: 12px 15px;
-            font-size: 14px;
+        .hamburger-btn {
+            background-color: rgba(255, 165, 0, 0.7);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             transition: all 0.3s ease;
-            flex: 1;
-            margin: 0 8px;
-            max-width: 30%;
-            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hamburger-btn:hover {
+            background-color: rgba(255, 165, 0, 0.9);
+            transform: scale(1.1);
+        }
+        
+        .menu-items {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 10px 0;
+            width: 200px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .menu-items.show {
+            display: block;
+        }
+        
+        .menu-item {
+            color: #FFA500;
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
             font-weight: bold;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            border-left: 3px solid transparent;
         }
         
-        .menu-button:hover {
+        .menu-item:hover {
             background-color: rgba(255, 165, 0, 0.2);
             color: #FFD700;
-            border-color: #FFD700;
-            transform: translateY(-2px);
+            border-left: 3px solid #FFD700;
+            padding-left: 25px;
         }
         
         .main-title {
@@ -222,7 +250,7 @@
         .logout-button {
             position: fixed;
             top: 20px;
-            left: 20px;
+            right: 20px;
             background-color: rgba(255, 0, 0, 0.3);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -256,16 +284,11 @@
                 max-width: 90%;
             }
             
-            .menu-button {
-                padding: 10px 5px;
-                font-size: 12px;
-            }
-            
             .logout-button {
                 font-size: 12px;
                 padding: 6px 12px;
                 top: 15px;
-                left: 15px;
+                right: 15px;
             }
             
             .access-container {
@@ -277,20 +300,15 @@
                 height: 40px;
                 font-size: 1.2rem;
             }
-        }
-        
-        @keyframes slideUp {
-            from {
-                bottom: -100px;
-            }
-            to {
-                bottom: 0;
+            
+            .menu-items {
+                width: 180px;
             }
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -332,6 +350,18 @@
         <!-- Capa oscura para mejorar legibilidad -->
         <div class="overlay"></div>
         
+        <!-- Menú hamburguesa -->
+        <div class="hamburger-menu">
+            <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+            <div class="menu-items" id="menuItems">
+                <a href="Analizar.html" class="menu-item">Analizar música</a>
+                <a href="Formulario.html" class="menu-item">Formulario</a>
+                <a href="informacion.html" class="menu-item">Información</a>
+                <a href="guia.html" class="menu-item">Guía de Mescla</a>
+                <a href="calculo.html" class="menu-item">Cálculo</a>
+            </div>
+        </div>
+        
         <!-- Botón de cerrar sesión -->
         <button class="logout-button" id="logoutBtn">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -349,15 +379,6 @@
             </h1>
             <p class="subtitle">Analizamos tu música para ofrecerte una experiencia de escucha profesional</p>
         </div>
-        
-        <!-- Menú inferior transparente -->
-        <div class="bottom-menu">
-    <button class="menu-button" onclick="window.location.href='Analizar.html'">Analizar música</button>
-    <button class="menu-button" onclick="window.location.href='Formulario.html'">Formulario</button>
-    <button class="menu-button" onclick="window.location.href='informacion.html'">Información</button>
-    <button class="menu-button" onclick="window.location.href='guia.html'">Guía de Mescla</button>
-    <button class="menu-button" onclick="window.location.href='calculo.html'">Cálculo</button>
-</div>
     </div>
 
     <script>
@@ -372,6 +393,8 @@
         const errorMessage = document.getElementById('errorMessage');
         const codeInputs = document.querySelectorAll('.access-code input');
         const logoutBtn = document.getElementById('logoutBtn');
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menuItems = document.getElementById('menuItems');
         
         // Verificar si ya se ingresó el código correctamente
         function checkAccess() {
@@ -395,9 +418,6 @@
                     mainVideo.play();
                 });
             }
-            
-            // Mostrar animaciones del menú
-            document.querySelector('.bottom-menu').style.animation = 'slideUp 0.8s ease-out forwards';
         }
         
         // Manejar el movimiento entre inputs del código
@@ -464,6 +484,18 @@
             localStorage.removeItem(ACCESS_KEY);
             // Redirigir a index.html
             window.location.href = 'index.html';
+        });
+        
+        // Evento para el botón hamburguesa
+        hamburgerBtn.addEventListener('click', () => {
+            menuItems.classList.toggle('show');
+        });
+        
+        // Cerrar menú al hacer clic fuera de él
+        document.addEventListener('click', (e) => {
+            if (!menuItems.contains(e.target) && e.target !== hamburgerBtn) {
+                menuItems.classList.remove('show');
+            }
         });
         
         // Forzar la reproducción del video de fondo de acceso

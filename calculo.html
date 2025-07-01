@@ -345,7 +345,7 @@
                 <div>
                     <div class="input-group">
                         <label for="streams">Número de Streams</label>
-                        <input type="number" id="streams" placeholder="Ejemplo: 10000" min="0">
+                        <input type="text" id="streams" placeholder="Ejemplo: 10,000" pattern="[0-9,.]*" inputmode="numeric">
                     </div>
                     
                     <div class="input-group">
@@ -375,9 +375,7 @@
                         <label for="distribution">Distribuidor/Disquera</label>
                         <select id="distribution">
                             <option value="independent">Artista independiente (100%)</option>
-                            <option value="label70">Disquera (70% para ti)</option>
-                            <option value="label50">Disquera (50% para ti)</option>
-                            <option value="label30">Disquera (30% para ti)</option>
+                            <option value="label60">Disquera (60% para la disquera)</option>
                         </select>
                     </div>
                 </div>
@@ -439,25 +437,25 @@
                 <thead>
                     <tr>
                         <th>Streams</th>
-                        <th>Artista (70%)</th>
-                        <th>Disquera (30%)</th>
+                        <th>Artista (40%)</th>
+                        <th>Disquera (60%)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>10,000</td>
-                        <td class="highlight">$315</td>
-                        <td class="highlight">$135</td>
+                        <td class="highlight">$180</td>
+                        <td class="highlight">$270</td>
                     </tr>
                     <tr>
                         <td>100,000</td>
-                        <td class="highlight">$3,150</td>
-                        <td class="highlight">$1,350</td>
+                        <td class="highlight">$1,800</td>
+                        <td class="highlight">$2,700</td>
                     </tr>
                     <tr>
                         <td>1,000,000</td>
-                        <td class="highlight">$31,500</td>
-                        <td class="highlight">$13,500</td>
+                        <td class="highlight">$18,000</td>
+                        <td class="highlight">$27,000</td>
                     </tr>
                 </tbody>
             </table>
@@ -493,10 +491,25 @@
             }
         });
         
+        // Formatear automáticamente el número de streams con separadores de miles
+        document.getElementById('streams').addEventListener('input', function(e) {
+            // Obtener el valor sin comas ni puntos
+            let value = this.value.replace(/[^0-9]/g, '');
+            
+            // Si hay un valor, formatearlo con separadores de miles
+            if (value.length > 0) {
+                value = parseInt(value, 10).toLocaleString('es-MX');
+            }
+            
+            // Actualizar el valor en el input
+            this.value = value;
+        });
+        
         // Cálculo de ingresos
         document.getElementById('calculate').addEventListener('click', function() {
-            // Obtener valores del formulario
-            const streams = parseInt(document.getElementById('streams').value) || 0;
+            // Obtener y limpiar el valor de streams (eliminar comas)
+            const streamsValue = document.getElementById('streams').value.replace(/[^0-9]/g, '');
+            const streams = parseInt(streamsValue) || 0;
             const country = document.getElementById('country').value;
             const accountType = document.getElementById('account-type').value;
             const distribution = document.getElementById('distribution').value;
@@ -562,17 +575,9 @@
             let labelPercentage = 0.0;
             
             switch(distribution) {
-                case 'label70':
-                    artistPercentage = 0.7;
-                    labelPercentage = 0.3;
-                    break;
-                case 'label50':
-                    artistPercentage = 0.5;
-                    labelPercentage = 0.5;
-                    break;
-                case 'label30':
-                    artistPercentage = 0.3;
-                    labelPercentage = 0.7;
+                case 'label60':
+                    artistPercentage = 0.4;
+                    labelPercentage = 0.6;
                     break;
                 default: // independent
                     artistPercentage = 1.0;
@@ -602,7 +607,8 @@
         
         document.getElementById('download-pdf').addEventListener('click', function() {
             // Get all the input values
-            const streams = parseInt(document.getElementById('streams').value) || 0;
+            const streamsValue = document.getElementById('streams').value.replace(/[^0-9]/g, '');
+            const streams = parseInt(streamsValue) || 0;
             const country = document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
             const accountType = document.getElementById('account-type').options[document.getElementById('account-type').selectedIndex].text;
             const distribution = document.getElementById('distribution').options[document.getElementById('distribution').selectedIndex].text;
@@ -641,7 +647,7 @@
             doc.text('Tus Datos', 20, 50);
             
             doc.setFontSize(12);
-            doc.text(`Streams totales: ${streams.toLocaleString()}`, 20, 60);
+            doc.text(`Streams totales: ${streams.toLocaleString('es-MX')}`, 20, 60);
             doc.text(`País predominante: ${country}`, 20, 70);
             doc.text(`Tipo de cuenta: ${accountType}`, 20, 80);
             doc.text(`Distribución: ${distribution}`, 20, 90);

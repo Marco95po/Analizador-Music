@@ -154,6 +154,34 @@
             color: var(--primary);
         }
         
+        .result-split {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .result-artist, .result-label {
+            flex: 1;
+            padding: 1rem;
+        }
+        
+        .result-artist {
+            border-right: 1px solid var(--primary);
+        }
+        
+        .split-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin: 0.5rem 0;
+        }
+        
+        .split-title {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+        
         .info-section {
             margin-top: 3rem;
         }
@@ -360,6 +388,18 @@
             <div class="results" id="results" style="display: none;">
                 <h2>Tu Ingreso Estimado</h2>
                 <div class="result-value" id="low-range">$0.00 MXN</div>
+                
+                <div class="result-split" id="revenue-split" style="display: none;">
+                    <div class="result-artist">
+                        <div class="split-title">Para el Artista</div>
+                        <div class="split-value" id="artist-revenue">$0.00 MXN</div>
+                    </div>
+                    <div class="result-label">
+                        <div class="split-title">Para la Disquera</div>
+                        <div class="split-value" id="label-revenue">$0.00 MXN</div>
+                    </div>
+                </div>
+                
                 <button id="download-pdf" style="margin-top: 2rem;">
                     Descargar Reporte en PDF
                 </button>
@@ -399,21 +439,25 @@
                 <thead>
                     <tr>
                         <th>Streams</th>
-                        <th>Ingreso Estimado (MXN)</th>
+                        <th>Artista (70%)</th>
+                        <th>Disquera (30%)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>10,000</td>
-                        <td class="highlight">$450</td>
+                        <td class="highlight">$315</td>
+                        <td class="highlight">$135</td>
                     </tr>
                     <tr>
                         <td>100,000</td>
-                        <td class="highlight">$4,500</td>
+                        <td class="highlight">$3,150</td>
+                        <td class="highlight">$1,350</td>
                     </tr>
                     <tr>
                         <td>1,000,000</td>
-                        <td class="highlight">$45,000</td>
+                        <td class="highlight">$31,500</td>
+                        <td class="highlight">$13,500</td>
                     </tr>
                 </tbody>
             </table>
@@ -510,27 +554,45 @@
                     // No se aplica ajuste
             }
             
-            // Aplicar porcentaje de distribución
-            let distributionRate = 1.0;
+            // Calcular ingresos totales
+            const totalEarnings = streams * baseLow;
+            
+            // Calcular distribución
+            let artistPercentage = 1.0;
+            let labelPercentage = 0.0;
+            
             switch(distribution) {
                 case 'label70':
-                    distributionRate = 0.7;
+                    artistPercentage = 0.7;
+                    labelPercentage = 0.3;
                     break;
                 case 'label50':
-                    distributionRate = 0.5;
+                    artistPercentage = 0.5;
+                    labelPercentage = 0.5;
                     break;
                 case 'label30':
-                    distributionRate = 0.3;
+                    artistPercentage = 0.3;
+                    labelPercentage = 0.7;
                     break;
                 default: // independent
-                    distributionRate = 1.0;
+                    artistPercentage = 1.0;
+                    labelPercentage = 0.0;
             }
             
-            // Calcular ingresos finales (solo usamos el rango bajo)
-            const lowEarnings = streams * baseLow * distributionRate;
+            const artistEarnings = totalEarnings * artistPercentage;
+            const labelEarnings = totalEarnings * labelPercentage;
             
             // Mostrar resultados
-            document.getElementById('low-range').textContent = formatMoney(lowEarnings);
+            document.getElementById('low-range').textContent = formatMoney(totalEarnings);
+            
+            // Mostrar división de ingresos si hay disquera
+            if (distribution !== 'independent') {
+                document.getElementById('artist-revenue').textContent = formatMoney(artistEarnings);
+                document.getElementById('label-revenue').textContent = formatMoney(labelEarnings);
+                document.getElementById('revenue-split').style.display = 'flex';
+            } else {
+                document.getElementById('revenue-split').style.display = 'none';
+            }
             
             document.getElementById('results').style.display = 'block';
             
@@ -546,7 +608,9 @@
             const distribution = document.getElementById('distribution').options[document.getElementById('distribution').selectedIndex].text;
             
             // Get the results
-            const lowRange = document.getElementById('low-range').textContent;
+            const totalEarnings = document.getElementById('low-range').textContent;
+            const artistEarnings = document.getElementById('artist-revenue') ? document.getElementById('artist-revenue').textContent : totalEarnings;
+            const labelEarnings = document.getElementById('label-revenue') ? document.getElementById('label-revenue').textContent : '$0.00 MXN';
             
             // Create a new jsPDF instance
             const { jsPDF } = window.jspdf;
@@ -587,11 +651,17 @@
             doc.text('Resultado Estimado', 20, 110);
             
             doc.setFontSize(12);
-            doc.text(`Ingreso estimado: ${lowRange}`, 20, 120);
+            doc.text(`Ingreso total estimado: ${totalEarnings}`, 20, 120);
+            
+            // Add split results if applicable
+            if (distribution !== 'Artista independiente (100%)') {
+                doc.text(`Para el artista: ${artistEarnings}`, 20, 130);
+                doc.text(`Para la disquera: ${labelEarnings}`, 20, 140);
+            }
             
             // Add explanation section
             doc.setFontSize(16);
-            doc.text('Cómo se calcula', 20, 140);
+            doc.text('Cómo se calcula', 20, 160);
             
             doc.setFontSize(12);
             const text = `Este valor es una estimación basada en:
@@ -600,7 +670,7 @@
 - Porcentaje de distribución seleccionado
 - Se muestra el rango bajo de la estimación`;
             
-            doc.text(text.split('\n'), 20, 150);
+            doc.text(text.split('\n'), 20, 170);
             
             // Add disclaimer
             doc.setFontSize(10);
